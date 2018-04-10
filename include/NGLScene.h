@@ -1,6 +1,10 @@
 #ifndef NGLSCENE_H_
 #define NGLSCENE_H_
 #include <ngl/Vec3.h>
+#include <ngl/Camera.h>
+#include <ngl/Transformation.h>
+#include <ngl/Light.h>
+#include "Boid.h"
 
 #include <QOpenGLWindow>
 #include "WindowParams.h"
@@ -43,6 +47,8 @@ class NGLScene : public QOpenGLWindow
     //----------------------------------------------------------------------------------------------------------------------
     void resizeGL(int _w, int _h) override;
 
+
+
 private:
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -74,10 +80,28 @@ private:
     /// @param _event the Qt Event structure
     //----------------------------------------------------------------------------------------------------------------------
     void wheelEvent( QWheelEvent *_event) override;
+
+    void initializeShader();
+    void initializeCamera(ngl::Vec3 _from, ngl::Vec3 _to, ngl::Vec3 _up);
+    void createLights();
+    void loadMatrixToShader();
     /// @brief windows parameters for mouse control etc.
     WinParams m_win;
     /// position for our model
     ngl::Vec3 m_modelPos;
+    /// camera
+    ngl::Camera m_cam;
+    /// boid transformation
+    ngl::Transformation m_boidTransform;
+    /// Scene Light
+    ngl::Light m_light01;
+
+    Boid *testBoid = new(Boid);
+
+    ngl::Transformation _targetTransform;
+
+
+
 
 };
 

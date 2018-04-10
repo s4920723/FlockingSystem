@@ -5,17 +5,17 @@
 #include <ngl/Mat3.h>
 #include <ngl/Mat4.h>
 #include <ngl/ShaderLib.h>
-#include <ngl/Camera.h>
+#include <initializer_list>
+
 
 
 Boid::Boid()
 {
-  ngl::Vec3 position(0.0f, 0.5f, 0.5f);
-  m_position =position;
-  ngl::Vec3 velocity(0.5f, 0.5f, 0.5f);
-  m_velocity = velocity;
-  m_maxSpeed = 2.0f;
-  m_maxForce = 1.0f;
+    std::cout << "Boid has been initialized\n";
+    //m_position.set(0.0f, 0.0f, 0.0f);
+    m_velocity.set(0.0f, 0.001f, 0.5f);
+    //m_acceleration = 0.001f;
+    m_currentTransform.setScale(0.1f, 0.1f, 0.1f);
 }
 
 Boid::~Boid()
@@ -32,42 +32,56 @@ ngl::Vec3 Boid::getVel()
   return m_velocity;
 }
 
-void Boid::loadMatrixToShader(ngl::Camera _cam, ngl::Mat4 _mouseGlobalTX)
+void Boid::loadMatrixToShader(ngl::ShaderLib *shader, ngl::Camera _cam)
 {
-  ngl::ShaderLib* shader = ngl::ShaderLib::instance();
-
-  ngl::Mat4 MV;
-  ngl::Mat4 MVP;
-  ngl::Mat3 normalMatrix;
-  ngl::Mat4 M;
-  M            = _mouseGlobalTX;
-  MV           = _cam.getViewMatrix() * M;
-  MVP          = _cam.getVPMatrix() * M;
-
-  normalMatrix = MV;
-  normalMatrix.inverse().transpose();
-  shader->setUniform( "MV", MV );
-  shader->setUniform( "MVP", MVP );
-  shader->setUniform( "normalMatrix", normalMatrix );
-  shader->setUniform( "M", M );
+    (*shader)["BoidShader"]->use();
+    ngl::Mat4 MV;
+    ngl::Mat4 MVP;
+    ngl::Mat3 normalMatrix;
+    ngl::Mat4 M;
+    M=m_currentTransform.getMatrix();
+    MV=_cam.getViewMatrix()*M;
+    MVP=_cam.getProjectionMatrix() *MV;
+    normalMatrix=MV;
+    normalMatrix.inverse();
+    shader->setUniform("MV",MV);
+    shader->setUniform("MVP",MVP);
+    shader->setUniform("normalMatrix",normalMatrix);
+    shader->setUniform("M",M);
 }
 
-void Boid::drawBoid(ngl::Camera _cam, ngl::Mat4 _mouseGlobalTX)
+void Boid::drawBoid()
 {
-  loadMatrixToShader(_cam, _mouseGlobalTX);
-  std::cout << "Boid has been drawn\n";
-  ngl::VAOPrimitives::instance() -> draw("cube");
+    //std::cout << "Boid has been drawn\n";
+    ngl::VAOPrimitives::instance() -> draw("troll");
 }
 
 void Boid::move()
 {
+  std::cout << "Current Boid Velocity " << m_velocity.m_x << ", " << m_velocity.m_y << ", " << m_velocity.m_z <<"\n";
   m_velocity += m_acceleration;
-  m_velocity.clamp(0, m_maxSpeed);
+  m_velocity.clamp(-m_maxSpeed, m_maxSpeed);
   m_position += m_velocity;
   m_acceleration *= 0;
+  m_currentTransform.setPosition(m_position);
+}
+
+void Boid::rotate()
+{
+
+}
+
+void Boid::update()
+{
+
 }
 
 void Boid::seek(ngl::Vec3 _targetPos)
 {
-
+    ngl::Vec3 desired = _targetPos - m_position;
+    desired.normalize();
+    desired *= m_maxSpeed;
+    ngl::Vec3 steer = desired - m_velocity;
+    steer.clamp(m_maxForce);
+    m_acceleration = steer;
 }
