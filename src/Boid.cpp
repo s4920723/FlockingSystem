@@ -64,11 +64,12 @@ void Boid::move()
   m_position += m_velocity;
   m_acceleration *= 0;
   m_currentTransform.setPosition(m_position);
+  rotate();
 }
 
 void Boid::rotate()
 {
-
+    m_currentTransform.addRotation(0.0f, 10.0f, 0.0f);
 }
 
 void Boid::update()

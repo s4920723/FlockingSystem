@@ -26,7 +26,7 @@ class Boid{
     ngl::Vec3 m_velocity;
     ngl::Vec3 m_acceleration;
     float m_maxSpeed = 0.01f;
-    float m_maxForce = 0.005f;
+    float m_maxForce = 0.0001f;
     ngl::Transformation m_currentTransform;
 };
 
