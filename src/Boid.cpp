@@ -9,12 +9,10 @@
 
 
 
-Boid::Boid()
+Boid::Boid(ngl::Vec3 _initPos, ngl::Vec3 _initVel)
 {
     std::cout << "Boid has been initialized\n";
-    //m_position.set(0.0f, 0.0f, 0.0f);
-    m_velocity.set(0.0f, 0.001f, 0.5f);
-    //m_acceleration = 0.001f;
+    m_velocity.set(_initVel);
     m_currentTransform.setScale(0.1f, 0.1f, 0.1f);
 }
 

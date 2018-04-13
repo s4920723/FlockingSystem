@@ -11,6 +11,7 @@
 #include <ngl/Material.h>
 #include <initializer_list>
 #include <ngl/VAOPrimitives.h>
+#include <
 
 
 NGLScene::NGLScene()
@@ -131,10 +132,13 @@ void NGLScene::paintGL()
 
 
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-  testBoid->seek(_targetTransform.getPosition());
-  testBoid->move();
-  testBoid->loadMatrixToShader(shader, m_cam);
-  testBoid->drawBoid();
+  for (int i = 0; i < 5; i++)
+  {
+      testBoid->seek(_targetTransform.getPosition());
+      testBoid->move();
+      testBoid->loadMatrixToShader(shader, m_cam);
+      testBoid->drawBoid();
+  }
   update();
 }
 

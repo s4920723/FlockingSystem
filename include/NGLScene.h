@@ -96,7 +96,8 @@ private:
     /// Scene Light
     ngl::Light m_light01;
 
-    Boid *testBoid = new(Boid);
+    forea
+    Boid *testBoid = new Boid;
 
     ngl::Transformation _targetTransform;
 

@@ -9,7 +9,7 @@
 
 class Boid{
   public:
-    Boid();
+    Boid(ngl::Vec3 _initPos, ngl::Vec3 _initVel);
     ~Boid();
     ngl::Vec3 getPos();
     ngl::Vec3 getVel();
