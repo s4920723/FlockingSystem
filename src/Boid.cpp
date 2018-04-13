@@ -11,13 +11,15 @@
 
 Boid::Boid(ngl::Vec3 _initPos, ngl::Vec3 _initVel)
 {
-    std::cout << "Boid has been initialized\n";
+    std::cout << "Boid has been created\n";
+    m_position.set(_initPos);
     m_velocity.set(_initVel);
     m_currentTransform.setScale(0.1f, 0.1f, 0.1f);
 }
 
 Boid::~Boid()
 {
+    std::cout << "Boid has been destroyed\n";
 }
 
 ngl::Vec3 Boid::getPos()
@@ -56,7 +58,7 @@ void Boid::drawBoid()
 
 void Boid::move()
 {
-  std::cout << "Current Boid Velocity " << m_velocity.m_x << ", " << m_velocity.m_y << ", " << m_velocity.m_z <<"\n";
+  //std::cout << "Current Boid Velocity " << m_velocity.m_x << ", " << m_velocity.m_y << ", " << m_velocity.m_z <<"\n";
   m_velocity += m_acceleration;
   m_velocity.clamp(-m_maxSpeed, m_maxSpeed);
   m_position += m_velocity;

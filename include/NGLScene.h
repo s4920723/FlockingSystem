@@ -96,14 +96,9 @@ private:
     /// Scene Light
     ngl::Light m_light01;
 
-    forea
-    Boid *testBoid = new Boid;
+    Boid *testBoid = new Boid(ngl::Vec3(0.0f, 0.0f, 0.0f), ngl::Vec3(0.0f, -1.0f, 0.0f));
 
     ngl::Transformation _targetTransform;
-
-
-
-
 };
 
 

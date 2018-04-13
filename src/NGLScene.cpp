@@ -2,7 +2,6 @@
 #include <QGuiApplication>
 
 #include "NGLScene.h"
-#include "Boid.h"
 #include <ngl/NGLInit.h>
 #include <iostream>
 #include <ngl/Camera.h>
@@ -11,8 +10,6 @@
 #include <ngl/Material.h>
 #include <initializer_list>
 #include <ngl/VAOPrimitives.h>
-#include <
-
 
 NGLScene::NGLScene()
 {
@@ -51,7 +48,6 @@ void NGLScene::initializeGL()
   createLights();
 
 
-
 }
 
 void NGLScene::initializeShader()
@@ -77,7 +73,6 @@ void NGLScene::initializeShader()
     (*boidShader)[shaderProgram]->use();
     ngl::Material m(ngl::STDMAT::POLISHEDSILVER);
     m.loadToShader("material");
-
 
     boidShader->setUniform("viewerPos", m_cam.getEye().toVec3());
 }
@@ -129,16 +124,11 @@ void NGLScene::paintGL()
   _targetTransform.setScale(0.03f, 0.03f, 0.03f);
   loadMatrixToShader();
   ngl::VAOPrimitives::instance()->draw("football");
-
-
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-  for (int i = 0; i < 5; i++)
-  {
-      testBoid->seek(_targetTransform.getPosition());
-      testBoid->move();
-      testBoid->loadMatrixToShader(shader, m_cam);
-      testBoid->drawBoid();
-  }
+  testBoid->seek(_targetTransform.getPosition());
+  testBoid->move();
+  testBoid->loadMatrixToShader(shader, m_cam);
+  testBoid->drawBoid();;
   update();
 }
 
@@ -157,9 +147,9 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
       m_win.spinYFace=0;
       m_modelPos.set(ngl::Vec3::zero());
   break;
-  case Qt::Key_Plus : m_boidTransform.addRotation(0.0f, 45.0f, 0.0f); break;
   case Qt::Key_Up : m_boidTransform.addPosition(0.0f, 0.0f, 0.3f); break;
   case Qt::Key_Down : m_boidTransform.addPosition(0.0f, 0.0f, -0.3f); break;
+  case Qt::Key_X : delete testBoid; break;
   default : break;
   }
   // finally update the GLWindow and re-draw
