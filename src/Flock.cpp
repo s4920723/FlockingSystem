@@ -24,13 +24,13 @@ void Flock::addBoid()
     for (int i = 0; i<3; i++)
     {
         float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-        _randPos[i] = r;
+        _randPos[i] = r*(-1);
     }
 
     for (int j = 0; j<3; j++)
     {
         float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-        _randVel[j] = r;
+        _randVel[j] = r*(-1);
     }
 
     std::cout << "New boid position: " << _randPos.m_x << ", " << _randPos.m_y << ", " << _randPos.m_z << "\n";

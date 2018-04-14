@@ -6,6 +6,7 @@
 #include <ngl/Mat4.h>
 #include <ngl/ShaderLib.h>
 #include <initializer_list>
+#include <math.h>
 
 
 
@@ -59,23 +60,23 @@ void Boid::drawBoid()
 void Boid::move()
 {
   //std::cout << "Current Boid Velocity " << m_velocity.m_x << ", " << m_velocity.m_y << ", " << m_velocity.m_z <<"\n";
+  ngl::Vec3 velocity_temp = m_velocity;
   m_velocity += m_acceleration;
   m_velocity.clamp(-m_maxSpeed, m_maxSpeed);
   m_position += m_velocity;
   m_acceleration *= 0;
   m_currentTransform.setPosition(m_position);
-  rotate();
+  rotate(velocity_temp, m_velocity);
 }
 
-void Boid::rotate()
+void Boid::rotate(ngl::Vec3 _velOld, ngl::Vec3 _velNew)
 {
-    m_currentTransform.addRotation(0.0f, 10.0f, 0.0f);
+    float rotAngle = _velOld.dot(_velNew)/(_velOld.length() * _velNew.length());
+    std::cout << "Boid Rotation: " << acos(rotAngle) << "\n";
+
+    m_currentTransform.addRotation(0.0f, cos(rotAngle), 0.0f);
 }
 
-void Boid::update()
-{
-
-}
 
 void Boid::seek(ngl::Vec3 _targetPos)
 {
@@ -85,4 +86,17 @@ void Boid::seek(ngl::Vec3 _targetPos)
     ngl::Vec3 steer = desired - m_velocity;
     steer.clamp(m_maxForce);
     m_acceleration = steer;
+}
+
+void Boid::arrive(ngl::Vec3 _targetPos)
+{
+    ngl::Vec3 desired = _targetPos - m_position;
+    if (desired.length() < 0.25f)
+    {
+        desired = 5.0f;
+    }
+    else
+    {
+        desired = 5.0f;
+    }
 }

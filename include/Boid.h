@@ -1,5 +1,5 @@
-#ifndef BOID_H
-#define BOID_H
+#ifndef _BOID_H_
+#define _BOID_H_
 
 #include <ngl/Vec3.h>
 #include <ngl/Camera.h>
@@ -14,11 +14,11 @@ class Boid{
     ngl::Vec3 getPos();
     ngl::Vec3 getVel();
     void move();
-    void rotate();
+    void rotate(ngl::Vec3 _velOld, ngl::Vec3 _velNew);
     void seek(ngl::Vec3 _targetPos);
+    void arrive(ngl::Vec3 _tagetPos);
     void drawBoid();
     void loadMatrixToShader(ngl::ShaderLib *shader, ngl::Camera _cam);
-    void update();
 
   private:
     int m_id;
@@ -26,7 +26,7 @@ class Boid{
     ngl::Vec3 m_velocity;
     ngl::Vec3 m_acceleration;
     float m_maxSpeed = 0.01f;
-    float m_maxForce = 0.0001f;
+    float m_maxForce = 0.001f;
     ngl::Transformation m_currentTransform;
 };
 
