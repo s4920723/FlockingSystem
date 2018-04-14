@@ -124,11 +124,19 @@ void NGLScene::paintGL()
   _targetTransform.setScale(0.03f, 0.03f, 0.03f);
   loadMatrixToShader();
   ngl::VAOPrimitives::instance()->draw("football");
+
+  //SHADER INSTANCE
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+
+  //TEST BOID ALONE
   testBoid->seek(_targetTransform.getPosition());
   testBoid->move();
   testBoid->loadMatrixToShader(shader, m_cam);
   testBoid->drawBoid();;
+
+  //TEST FLOCK
+  m_testFlock->drawFlock(_targetTransform.getPosition(), shader, m_cam);
+
   update();
 }
 
@@ -150,6 +158,8 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   case Qt::Key_Up : m_boidTransform.addPosition(0.0f, 0.0f, 0.3f); break;
   case Qt::Key_Down : m_boidTransform.addPosition(0.0f, 0.0f, -0.3f); break;
   case Qt::Key_X : delete testBoid; break;
+  case Qt::Key_Plus : m_testFlock->addBoid(); break;
+  case Qt::Key_Minus : m_testFlock->removeBoid();
   default : break;
   }
   // finally update the GLWindow and re-draw
