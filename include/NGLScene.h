@@ -5,6 +5,7 @@
 #include <ngl/Transformation.h>
 #include <ngl/Light.h>
 #include "Boid.h"
+#include "Flock.h"
 
 #include <QOpenGLWindow>
 #include "WindowParams.h"
@@ -97,6 +98,8 @@ private:
     ngl::Light m_light01;
 
     Boid *testBoid = new Boid(ngl::Vec3(0.0f, 0.0f, 0.0f), ngl::Vec3(0.0f, -1.0f, 0.0f));
+    Flock testFlock;
+    testFlock.Test();
 
     ngl::Transformation _targetTransform;
 };
