@@ -53,13 +53,11 @@ void Boid::loadMatrixToShader(ngl::ShaderLib *shader, ngl::Camera _cam)
 
 void Boid::drawBoid()
 {
-    //std::cout << "Boid has been drawn\n";
     ngl::VAOPrimitives::instance() -> draw("troll");
 }
 
 void Boid::move()
 {
-  //std::cout << "Current Boid Velocity " << m_velocity.m_x << ", " << m_velocity.m_y << ", " << m_velocity.m_z <<"\n";
   ngl::Vec3 velocity_temp = m_velocity;
   m_velocity += m_acceleration;
   m_velocity.clamp(-m_maxSpeed, m_maxSpeed);
@@ -71,10 +69,10 @@ void Boid::move()
 
 void Boid::rotate(ngl::Vec3 _velOld, ngl::Vec3 _velNew)
 {
-    float rotAngle = _velOld.dot(_velNew)/(_velOld.length() * _velNew.length());
-    std::cout << "Boid Rotation: " << acos(rotAngle) << "\n";
+    float rotAngle = acos((ngl::Real)(_velOld.dot(_velNew)/(_velOld.length() * _velNew.length())));
+    std::cout << "Boid Rotation: " << rotAngle << "\n";
 
-    m_currentTransform.addRotation(0.0f, cos(rotAngle), 0.0f);
+    m_currentTransform.addRotation(rotAngle, rotAngle, rotAngle);
 }
 
 
@@ -86,6 +84,8 @@ void Boid::seek(ngl::Vec3 _targetPos)
     ngl::Vec3 steer = desired - m_velocity;
     steer.clamp(m_maxForce);
     m_acceleration = steer;
+
+    arrive(_targetPos);
 }
 
 void Boid::arrive(ngl::Vec3 _targetPos)
@@ -93,10 +93,10 @@ void Boid::arrive(ngl::Vec3 _targetPos)
     ngl::Vec3 desired = _targetPos - m_position;
     if (desired.length() < 0.25f)
     {
-        desired = 5.0f;
+        std::cout << "Boid close to target";
     }
-    else
+   /* else
     {
-        desired = 5.0f;
-    }
+       m_maxSpeed = 5.0f;
+    }*/
 }

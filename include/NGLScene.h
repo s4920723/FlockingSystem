@@ -6,6 +6,7 @@
 #include <ngl/Light.h>
 #include "Boid.h"
 #include "Flock.h"
+#include "ngl/BBox.h"
 
 #include <QOpenGLWindow>
 #include "WindowParams.h"

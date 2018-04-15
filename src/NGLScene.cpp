@@ -48,6 +48,7 @@ void NGLScene::initializeGL()
   createLights();
 
 
+
 }
 
 void NGLScene::initializeShader()
@@ -159,7 +160,7 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   case Qt::Key_Down : m_boidTransform.addPosition(0.0f, 0.0f, -0.3f); break;
   case Qt::Key_X : delete testBoid; break;
   case Qt::Key_Plus : m_testFlock->addBoid(); break;
-  case Qt::Key_Minus : m_testFlock->removeBoid();
+  case Qt::Key_Minus : m_testFlock->removeBoid(); break;
   default : break;
   }
   // finally update the GLWindow and re-draw
