@@ -13,7 +13,7 @@ The code uses a the Phong shader taken from the SimpleNGL demo for testing purpo
 * The ability of creating more than one boid.
 * Boid flocking behaviours.
 * The ability to place obstacles that the boids navigate around.
-*Tidy up code after testing boids, flocks and targets
+* Tidy up code after testing boids, flocks and targets
 
 ## Stretch goals:
 * GUI using QTcreator's design tools.
