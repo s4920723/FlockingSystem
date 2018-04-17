@@ -1,12 +1,12 @@
 #ifndef NGLSCENE_H_
 #define NGLSCENE_H_
 #include <ngl/Vec3.h>
+#include <ngl/Mat4.h>
 #include <ngl/Camera.h>
 #include <ngl/Transformation.h>
 #include <ngl/Light.h>
 #include "Boid.h"
 #include "Flock.h"
-#include "ngl/BBox.h"
 
 #include <QOpenGLWindow>
 #include "WindowParams.h"
@@ -89,6 +89,8 @@ private:
     void loadMatrixToShader();
     /// @brief windows parameters for mouse control etc.
     WinParams m_win;
+    ///Mouse transforms
+    ngl::Mat4 m_mouseGlobalTX;
     /// position for our model
     ngl::Vec3 m_modelPos;
     /// camera
@@ -97,11 +99,11 @@ private:
     ngl::Transformation m_boidTransform;
     /// Scene Light
     ngl::Light m_light01;
-
     Boid *testBoid = new Boid(ngl::Vec3(0.0f, 0.0f, 0.0f), ngl::Vec3(0.0f, -1.0f, 0.0f));
     Flock *m_testFlock = new Flock;
 
     ngl::Transformation _targetTransform;
+
 };
 
 

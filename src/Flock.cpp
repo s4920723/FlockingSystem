@@ -43,13 +43,13 @@ void Flock::removeBoid()
     delete boidArray.back();
 }
 
-void Flock::drawFlock(ngl::Vec3 _targetPos, ngl::ShaderLib *_shader, ngl::Camera _cam)
+void Flock::drawFlock(ngl::Vec3 _targetPos, ngl::ShaderLib *_shader, ngl::Camera _cam, ngl::Mat4 _mouseTX)
 {
     for (Boid* m : boidArray)
     {
         m->seek(_targetPos);
         m->move();
-        m->loadMatrixToShader(_shader, _cam);
+        m->loadMatrixToShader(_shader, _cam, _mouseTX);
         m->drawBoid();
     }
 

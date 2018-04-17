@@ -13,7 +13,7 @@ class Flock{
     ~Flock();
     void addBoid();
     void removeBoid();
-    void drawFlock(ngl::Vec3 _targetPos, ngl::ShaderLib *_shader, ngl::Camera _cam);
+    void drawFlock(ngl::Vec3 _targetPos, ngl::ShaderLib *_shader, ngl::Camera _cam, ngl::Mat4 mouseTX);
 
   private:
     std::vector<Boid*> boidArray;

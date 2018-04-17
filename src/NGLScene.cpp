@@ -47,8 +47,6 @@ void NGLScene::initializeGL()
   initializeShader();
   createLights();
 
-
-
 }
 
 void NGLScene::initializeShader()
@@ -92,7 +90,7 @@ void NGLScene::loadMatrixToShader()
     ngl::Mat4 MVP;
     ngl::Mat3 normalMatrix;
     ngl::Mat4 M;
-    M=_targetTransform.getMatrix();
+    M= m_mouseGlobalTX * _targetTransform.getMatrix();
     MV=m_cam.getViewMatrix()*M;
     MVP=m_cam.getProjectionMatrix() *MV;
     normalMatrix=MV;
@@ -129,14 +127,28 @@ void NGLScene::paintGL()
   //SHADER INSTANCE
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
 
+  //CAMERA TRANSFORMATION
+  // Rotation based on the mouse position for our global transform
+   ngl::Mat4 rotX;
+   ngl::Mat4 rotY;
+   // create the rotation matrices
+   rotX.rotateX( m_win.spinXFace );
+   rotY.rotateY( m_win.spinYFace );
+   // multiply the rotations
+   m_mouseGlobalTX = rotX * rotY;
+   // add the translations
+   m_mouseGlobalTX.m_m[ 3 ][ 0 ] = m_modelPos.m_x;
+   m_mouseGlobalTX.m_m[ 3 ][ 1 ] = m_modelPos.m_y;
+   m_mouseGlobalTX.m_m[ 3 ][ 2 ] = m_modelPos.m_z;
+
   //TEST BOID ALONE
   testBoid->seek(_targetTransform.getPosition());
   testBoid->move();
-  testBoid->loadMatrixToShader(shader, m_cam);
+  testBoid->loadMatrixToShader(shader, m_cam, m_mouseGlobalTX);
   testBoid->drawBoid();;
 
   //TEST FLOCK
-  m_testFlock->drawFlock(_targetTransform.getPosition(), shader, m_cam);
+  m_testFlock->drawFlock(_targetTransform.getPosition(), shader, m_cam, m_mouseGlobalTX);
 
   update();
 }

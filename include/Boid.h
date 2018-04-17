@@ -18,7 +18,7 @@ class Boid{
     void seek(ngl::Vec3 _targetPos);
     void arrive(ngl::Vec3 _tagetPos);
     void drawBoid();
-    void loadMatrixToShader(ngl::ShaderLib *shader, ngl::Camera _cam);
+    void loadMatrixToShader(ngl::ShaderLib *shader, ngl::Camera _cam, ngl::Mat4 _mouseTX);
 
   private:
     int m_id;

@@ -7,6 +7,7 @@
 #include <ngl/ShaderLib.h>
 #include <initializer_list>
 #include <math.h>
+#include <iomanip>
 
 
 
@@ -33,14 +34,14 @@ ngl::Vec3 Boid::getVel()
   return m_velocity;
 }
 
-void Boid::loadMatrixToShader(ngl::ShaderLib *shader, ngl::Camera _cam)
+void Boid::loadMatrixToShader(ngl::ShaderLib *shader, ngl::Camera _cam, ngl::Mat4 _mouseTX)
 {
     (*shader)["BoidShader"]->use();
     ngl::Mat4 MV;
     ngl::Mat4 MVP;
     ngl::Mat3 normalMatrix;
     ngl::Mat4 M;
-    M=m_currentTransform.getMatrix();
+    M=_mouseTX * m_currentTransform.getMatrix();
     MV=_cam.getViewMatrix()*M;
     MVP=_cam.getProjectionMatrix() *MV;
     normalMatrix=MV;
@@ -64,7 +65,7 @@ void Boid::move()
   m_position += m_velocity;
   m_acceleration *= 0;
   m_currentTransform.setPosition(m_position);
-  rotate(velocity_temp, m_velocity);
+  //rotate(velocity_temp, m_velocity);
 }
 
 void Boid::rotate(ngl::Vec3 _velOld, ngl::Vec3 _velNew)
@@ -93,7 +94,7 @@ void Boid::arrive(ngl::Vec3 _targetPos)
     ngl::Vec3 desired = _targetPos - m_position;
     if (desired.length() < 0.25f)
     {
-        std::cout << "Boid close to target";
+        std::cout << "Boid close to target \n";
     }
    /* else
     {
