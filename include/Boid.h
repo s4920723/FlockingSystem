@@ -6,6 +6,7 @@
 #include <ngl/Mat4.h>
 #include <ngl/Transformation.h>
 #include <ngl/ShaderLib.h>
+#include <ngl/BBox.h>
 
 class Boid{
   public:
@@ -19,6 +20,7 @@ class Boid{
     void arrive(ngl::Vec3 _tagetPos);
     void drawBoid();
     void loadMatrixToShader(ngl::ShaderLib *shader, ngl::Camera _cam, ngl::Mat4 _mouseTX);
+    void containment(ngl::BBox _container);
 
   private:
     int m_id;
@@ -26,7 +28,7 @@ class Boid{
     ngl::Vec3 m_velocity;
     ngl::Vec3 m_acceleration;
     float m_maxSpeed = 0.01f;
-    float m_maxForce = 0.001f;
+    float m_maxForce = 0.0001f;
     ngl::Transformation m_currentTransform;
 };
 

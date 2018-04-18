@@ -94,10 +94,24 @@ void Boid::arrive(ngl::Vec3 _targetPos)
     ngl::Vec3 desired = _targetPos - m_position;
     if (desired.length() < 0.25f)
     {
-        std::cout << "Boid close to target \n";
     }
    /* else
     {
        m_maxSpeed = 5.0f;
     }*/
+}
+
+void Boid::containment(ngl::BBox _container)
+{
+    if (m_currentTransform.getPosition().m_x > _container.maxX())
+    m_acceleration = _container.getNormalArray()->left();
+
+    if (m_currentTransform.getPosition().m_x < _container.minX())
+    m_acceleration = _container.getNormalArray()->right();
+
+    if (m_currentTransform.getPosition().m_y > _container.maxY())
+    m_acceleration = _container.getNormalArray()->down();
+
+    if (m_currentTransform.getPosition().m_y < _container.minY())
+    m_acceleration = _container.getNormalArray()->up();
 }

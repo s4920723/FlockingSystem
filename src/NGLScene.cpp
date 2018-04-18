@@ -119,7 +119,6 @@ void NGLScene::paintGL()
   glViewport(0,0,m_win.width,m_win.height);
 
   //TARGET
-  _targetTransform.setPosition(1.0f, 1.0f, 0.0f);
   _targetTransform.setScale(0.03f, 0.03f, 0.03f);
   loadMatrixToShader();
   ngl::VAOPrimitives::instance()->draw("football");
@@ -140,12 +139,6 @@ void NGLScene::paintGL()
    m_mouseGlobalTX.m_m[ 3 ][ 0 ] = m_modelPos.m_x;
    m_mouseGlobalTX.m_m[ 3 ][ 1 ] = m_modelPos.m_y;
    m_mouseGlobalTX.m_m[ 3 ][ 2 ] = m_modelPos.m_z;
-
-  //TEST BOID ALONE
-  testBoid->seek(_targetTransform.getPosition());
-  testBoid->move();
-  testBoid->loadMatrixToShader(shader, m_cam, m_mouseGlobalTX);
-  testBoid->drawBoid();;
 
   //TEST FLOCK
   m_testFlock->drawFlock(_targetTransform.getPosition(), shader, m_cam, m_mouseGlobalTX);
@@ -168,9 +161,10 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
       m_win.spinYFace=0;
       m_modelPos.set(ngl::Vec3::zero());
   break;
-  case Qt::Key_Up : m_boidTransform.addPosition(0.0f, 0.0f, 0.3f); break;
-  case Qt::Key_Down : m_boidTransform.addPosition(0.0f, 0.0f, -0.3f); break;
-  case Qt::Key_X : delete testBoid; break;
+  case Qt::Key_Up : _targetTransform.addPosition(0.0f, 0.0f, -0.01f); break;
+  case Qt::Key_Down : _targetTransform.addPosition(0.0f, 0.0f, 0.01f); break;
+  case Qt::Key_Right : _targetTransform.addPosition(0.01f, 0.0f, 0.0f); break;
+  case Qt::Key_Left : _targetTransform.addPosition(-0.01f, 0.0f, 0.0f); break;
   case Qt::Key_Plus : m_testFlock->addBoid(); break;
   case Qt::Key_Minus : m_testFlock->removeBoid(); break;
   default : break;

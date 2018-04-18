@@ -5,6 +5,7 @@
 #include <ngl/Camera.h>
 #include <ngl/Transformation.h>
 #include <ngl/Light.h>
+#include <ngl/BBox.h>
 #include "Boid.h"
 #include "Flock.h"
 
@@ -95,14 +96,14 @@ private:
     ngl::Vec3 m_modelPos;
     /// camera
     ngl::Camera m_cam;
-    /// boid transformation
-    ngl::Transformation m_boidTransform;
     /// Scene Light
     ngl::Light m_light01;
-    Boid *testBoid = new Boid(ngl::Vec3(0.0f, 0.0f, 0.0f), ngl::Vec3(0.0f, -1.0f, 0.0f));
+    ///Test Flock
     Flock *m_testFlock = new Flock;
 
     ngl::Transformation _targetTransform;
+
+    //ngl::BBox m_container;
 
 };
 
