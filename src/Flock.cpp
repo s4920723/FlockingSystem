@@ -40,7 +40,11 @@ void Flock::addBoid()
 
 void Flock::removeBoid()
 {
-    delete boidArray.back();
+    if (boidArray.size())
+    {
+        delete boidArray.back();
+        boidArray.pop_back();
+    }
 }
 
 void Flock::drawFlock(ngl::Vec3 _targetPos, ngl::ShaderLib *_shader, ngl::Camera _cam, ngl::Mat4 _mouseTX)
