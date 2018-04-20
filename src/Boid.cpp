@@ -8,15 +8,19 @@
 #include <initializer_list>
 #include <math.h>
 #include <iomanip>
+#include <random>
 
 
 
 Boid::Boid(ngl::Vec3 _initPos, ngl::Vec3 _initVel)
 {
+    static std::uniform_int_distribution<int> distribution(1,6);
+
     std::cout << "Boid has been created\n";
     m_position.set(_initPos);
     m_velocity.set(_initVel);
     m_currentTransform.setScale(0.1f, 0.1f, 0.1f);
+    m_wanderCounter = 0;
 }
 
 Boid::~Boid()
@@ -114,4 +118,20 @@ void Boid::containment(ngl::BBox _container)
 
     if (m_currentTransform.getPosition().m_y < _container.minY())
     m_acceleration = _container.getNormalArray()->up();
+}
+
+void Boid::wander(ngl::Vec3 _randomPos)
+{
+    m_wanderCounter++;
+    if (m_wanderCounter >= 200)
+    {
+        std::cout << "Wandering boid new target:" << _randomPos.m_x << ", " << _randomPos.m_y << ", " << _randomPos.m_z << "\n";
+        ngl::Vec3 desired = _randomPos - m_position;
+        desired.normalize();
+        desired *= m_maxSpeed;
+        ngl::Vec3 steer = desired - m_velocity;
+        steer.clamp(m_maxForce);
+        m_acceleration = steer;
+        m_wanderCounter = 0;
+    }
 }

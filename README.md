@@ -22,3 +22,9 @@ The code uses the Phong shader taken from the SimpleNGL demo for testing purpous
 * Predator boids.
 * Motion paths using simple GL lines.
 * Flow fields.
+
+
+## Questions:
+* What is wrong with the ngl::BBox class
+* Random seeds
+*

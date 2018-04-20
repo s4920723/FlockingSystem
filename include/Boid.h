@@ -21,6 +21,7 @@ class Boid{
     void drawBoid();
     void loadMatrixToShader(ngl::ShaderLib *shader, ngl::Camera _cam, ngl::Mat4 _mouseTX);
     void containment(ngl::BBox _container);
+    void wander(ngl::Vec3 _randomPos);
 
   private:
     int m_id;
@@ -28,8 +29,9 @@ class Boid{
     ngl::Vec3 m_velocity;
     ngl::Vec3 m_acceleration;
     float m_maxSpeed = 0.01f;
-    float m_maxForce = 0.0001f;
+    float m_maxForce = 0.001f;
     ngl::Transformation m_currentTransform;
+    int m_wanderCounter;
 };
 
 #endif
