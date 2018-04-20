@@ -35,25 +35,6 @@ ngl::Transformation Boid::getTransform()
   return m_currentTransform;
 }
 
-void Boid::loadMatrixToShader(std::string shaderName, ngl::Camera _cam, ngl::Mat4 _mouseTX)
-{
-  ngl::ShaderLib *shader = ngl::ShaderLib::instance();
-  (*shader)[shaderName]->use();
-  ngl::Mat4 MV;
-  ngl::Mat4 MVP;
-  ngl::Mat3 normalMatrix;
-  ngl::Mat4 M;
-  M=_mouseTX * m_currentTransform.getMatrix();
-  MV=_cam.getViewMatrix()*M;
-  MVP=_cam.getProjectionMatrix() *MV;
-  normalMatrix=MV;
-  normalMatrix.inverse();
-  shader->setUniform("MV",MV);
-  shader->setUniform("MVP",MVP);
-  shader->setUniform("normalMatrix",normalMatrix);
-  shader->setUniform("M",M);
-}
-
 void Boid::drawBoid()
 {
     ngl::VAOPrimitives::instance() -> draw("troll");

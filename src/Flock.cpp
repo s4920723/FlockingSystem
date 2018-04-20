@@ -2,12 +2,15 @@
 
 #include <iostream>
 #include <time.h>
-#include <boost/random.hpp>
+#include <ngl/Random.h>
 
 
-Flock::Flock()
+Flock::Flock(ngl::Camera _cam, std::string _shaderName, ngl::Mat4 _mouseTX)
 {
     std::cout << "Flock has been created\n";
+    m_cam = _cam;
+    m_shaderName = _shaderName;
+    m_mouseTX = _mouseTX;
 }
 
 Flock::~Flock()
@@ -15,32 +18,15 @@ Flock::~Flock()
     std::cout << "Flock has been destroyed\n";
 }
 
-float Flock::generateRandomFloat(float _min, float _max)
-{
-    boost::random::mt19937 rng;
-    rng.seed(time(0));
-    boost::random::uniform_real_distribution<float> u(_min, _max);
-    boost::variate_generator<boost::mt19937&, boost::random::uniform_real_distribution<float> > gen(rng, u);
-    return gen();
-}
-
 void Flock::addBoid()
 {
-    ngl::Vec3 randPos;
-    ngl::Vec3 randVel;
+    ngl::Vec3 randPos = ngl::Random::instance()->getRandomVec3();
+    ngl::Vec3 randVel = ngl::Random::instance()->getRandomVec3();
 
-    for (int i = 0; i<3; i++)
-    {
-        randPos[i] = generateRandomFloat(-1.0, 1.0);
-    }
-
-    for (int j = 0; j<3; j++)
-    {
-        randVel[j] = generateRandomFloat(-1.0, 1.0  );
-    }
-
-    std::cout << "New boid position: " << randPos.m_x << ", " << randPos.m_y << ", " << randPos.m_z << "\n";
-    std::cout << "New boid velocity: " << randVel.m_x << ", " << randVel.m_y << ", " << randVel.m_z << "\n";
+    std::cout << "New boid position: " << randPos.m_x << ", "
+              << randPos.m_y << ", " << randPos.m_z << "\n";
+    std::cout << "New boid velocity: " << randVel.m_x << ", "
+              << randVel.m_y << ", " << randVel.m_z << "\n";
     boidArray.push_back(new Boid(randPos, randVel));
 }
 
@@ -53,14 +39,32 @@ void Flock::removeBoid()
     }
 }
 
-void Flock::drawFlock(ngl::Vec3 _targetPos, ngl::ShaderLib *_shader, ngl::Camera _cam, ngl::Mat4 _mouseTX)
+void Flock::loadMatrixToShader(ngl::Transformation _boidTransform)
+{
+  ngl::ShaderLib *shader = ngl::ShaderLib::instance();
+  (*shader)[m_shaderName]->use();
+  ngl::Mat4 MV;
+  ngl::Mat4 MVP;
+  ngl::Mat3 normalMatrix;
+  ngl::Mat4 M;
+  M=m_mouseTX * _boidTransform.getMatrix();
+  MV=m_cam.getViewMatrix()*M;
+  MVP=m_cam.getProjectionMatrix() *MV;
+  normalMatrix=MV;
+  normalMatrix.inverse();
+  shader->setUniform("MV",MV);
+  shader->setUniform("MVP",MVP);
+  shader->setUniform("normalMatrix",normalMatrix);
+  shader->setUniform("M",M);
+}
+void Flock::drawFlock(ngl::Vec3 _targetPos)
 {
     for (Boid* m : boidArray)
     {
         m->seek(_targetPos);
-        //m->wander(ngl::Vec3(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1)));
+        m->wander(ngl::Random::instance()->getRandomVec3());
         m->move();
-        m->loadMatrixToShader(_shader, _cam, _mouseTX);
+        loadMatrixToShader(m->getTransform());
         m->drawBoid();
     }
 }
