@@ -57,21 +57,21 @@ void Flock::drawFlock(ngl::Vec3 _targetPos, ngl::ShaderLib *_shader, ngl::Camera
 {
     for (Boid* m : boidArray)
     {
-        //m->seek(_targetPos);
-        m->wander(ngl::Vec3(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1)));
+        m->seek(_targetPos);
+        //m->wander(ngl::Vec3(generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1), generateRandomFloat(-0.1, 0.1)));
         m->move();
         m->loadMatrixToShader(_shader, _cam, _mouseTX);
         m->drawBoid();
     }
 }
 
-ngl::Vec3 Flock::createNeighbourhood()
+ngl::Vec3 Flock::aligment()
 {
     for (Boid* currentBoid : boidArray)
     {
         for (std::vector<Boid*>::iterator boidIterator = boidArray.begin() ; boidIterator != boidArray.end(); ++boidIterator)
         {
-            if (currentBoid != boidIterator && ngl::Vec3(currentBoid - boidIterator).length() < 1.0f)
+            //if (ngl::Vec3(currentBoid->getPos() - *boidIterator).length() < 1.0f)
             {
 
             }

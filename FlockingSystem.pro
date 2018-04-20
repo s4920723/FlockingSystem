@@ -1,5 +1,5 @@
 # This specifies the exe name
-TARGET=BlankNGL
+TARGET=FlockingSystem
 # where to put the .o files
 OBJECTS_DIR=obj
 # core Qt Libs to use add more here if needed.
@@ -27,8 +27,7 @@ HEADERS+= $$PWD/include/NGLScene.h \
           $$PWD/include/Boid.h \
           $$PWD/include/Flock.h
 # and add the include dir into the search path for Qt and make
-INCLUDEPATH +=./include \
-               C:/NGL/include
+INCLUDEPATH +=./include
 # where our exe is going to live (root of project)
 DESTDIR=./
 # add the glsl shader files

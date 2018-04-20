@@ -46,7 +46,8 @@ void NGLScene::initializeGL()
   initializeCamera({1, 1, 1}, {0, 0, 0}, {0, 1, 0});
   initializeShader();
   createLights();
-
+  m_container.reset(new ngl::BBox(-3.0, 3.0, -3.0, 3.0,-3.0, 3.0));
+  m_testFlock.reset(new Flock());
 }
 
 void NGLScene::initializeShader()
@@ -118,9 +119,10 @@ void NGLScene::paintGL()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
 
+  m_container->draw();
   //TARGET
   _targetTransform.setScale(0.03f, 0.03f, 0.03f);
-  loadMatrixToShader();
+  //loadMatrixToShader();
   ngl::VAOPrimitives::instance()->draw("football");
 
   //SHADER INSTANCE
@@ -142,7 +144,19 @@ void NGLScene::paintGL()
 
   //TEST FLOCK
   m_testFlock->drawFlock(_targetTransform.getPosition(), shader, m_cam, m_mouseGlobalTX);
+}
 
+
+void NGLScene::timerEvent(QTimerEvent *_event )
+{
+  if(_event->timerId() == m_sphereUpdateTimer)
+  {
+    if (m_animate !=true)
+    {
+      return;
+    }
+  }
+  updateScene();
   update();
 }
 

@@ -51,7 +51,6 @@ class NGLScene : public QOpenGLWindow
     void resizeGL(int _w, int _h) override;
 
 
-
 private:
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -84,6 +83,10 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     void wheelEvent( QWheelEvent *_event) override;
 
+    void timerEvent( QTimerEvent *_event) override;
+
+    void updateScene();
+
     void initializeShader();
     void initializeCamera(ngl::Vec3 _from, ngl::Vec3 _to, ngl::Vec3 _up);
     void createLights();
@@ -99,11 +102,11 @@ private:
     /// Scene Light
     ngl::Light m_light01;
     ///Test Flock
-    Flock *m_testFlock = new Flock;
+    std::unique_ptr<Flock> m_testFlock;
 
     ngl::Transformation _targetTransform;
 
-    //ngl::BBox m_container;
+    std::unique_ptr<ngl::BBox> m_container;
 
 };
 
