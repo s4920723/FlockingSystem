@@ -27,7 +27,8 @@ HEADERS+= $$PWD/include/NGLScene.h \
           $$PWD/include/Boid.h \
           $$PWD/include/Flock.h
 # and add the include dir into the search path for Qt and make
-INCLUDEPATH +=./include
+INCLUDEPATH +=./include \
+              C:/NGL/include
 # where our exe is going to live (root of project)
 DESTDIR=./
 # add the glsl shader files

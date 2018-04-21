@@ -6,11 +6,12 @@
 
 
 
-Boid::Boid(ngl::Vec3 _initPos, ngl::Vec3 _initVel)
+Boid::Boid(int _id, ngl::Vec3 _initPos, ngl::Vec3 _initVel)
 {
     std::cout << "Boid has been created\n";
     m_position.set(_initPos);
     m_velocity.set(_initVel);
+    m_id = _id;
     m_currentTransform.setScale(0.1f, 0.1f, 0.1f);
     m_wanderCounter = 0;
 }
@@ -99,5 +100,81 @@ void Boid::wander(ngl::Vec3 _randomPos)
     {
         seek(_randomPos);
         m_wanderCounter = 0;
+    }
+}
+
+void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius)
+{
+    ngl::Vec3 velocitySum;
+    int neighbourCount;
+    velocitySum.zero();
+    for (std::unique_ptr<Boid>& otherBoid : _boidArray)
+    {
+        float distance = (otherBoid->getPos() - this->getPos()).length();
+        if (this->m_id != otherBoid->m_id && distance < _awareRadius)
+        {
+            velocitySum += otherBoid->getPos();
+            neighbourCount++;
+        }
+    }
+    if (neighbourCount > 0)
+    {
+        velocitySum /= (float)neighbourCount;
+        velocitySum.normalize();
+        velocitySum *= m_maxSpeed;
+        ngl::Vec3 steer = velocitySum - m_velocity;
+        steer.clamp(m_maxForce);
+        m_acceleration = steer;
+    }
+}
+
+void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius)
+{
+    ngl::Vec3 positionSum;
+    int neighbourCount;
+    positionSum.zero();
+    for (std::unique_ptr<Boid>& otherBoid : _boidArray)
+    {
+        float distance = (otherBoid->getPos() - this->getPos()).length();
+        if (this->m_id != otherBoid->m_id && distance < _awareRadius)
+        {
+            positionSum += otherBoid->getPos();
+            neighbourCount++;
+        }
+    }
+    if (neighbourCount > 0)
+    {
+        positionSum /= (float)neighbourCount;
+        positionSum.normalize();
+        positionSum *= m_maxSpeed;
+        ngl::Vec3 steer = (positionSum*(-1)) - m_velocity;
+        steer.clamp(m_maxForce);
+        m_acceleration = steer;
+    }
+}
+
+
+void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius)
+{
+    ngl::Vec3 positionSum;
+    int neighbourCount;
+    positionSum.zero();
+    for (std::unique_ptr<Boid>& otherBoid : _boidArray)
+    {
+        float distance = (otherBoid->getPos() - this->m_position).length();
+        if (this->m_id != otherBoid->m_id && distance < _awareRadius)
+        {
+            positionSum += otherBoid->getPos();
+            neighbourCount++;
+        }
+    }
+    if (neighbourCount > 0)
+    {
+        positionSum /= (float)neighbourCount;
+        positionSum.normalize();
+        positionSum *= m_maxSpeed;
+        ngl::Vec3 steer = positionSum - m_velocity;
+        steer.clamp(m_maxForce);
+        m_acceleration = steer;
     }
 }

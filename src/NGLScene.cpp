@@ -47,7 +47,7 @@ void NGLScene::initializeGL()
   initializeShader();
   createLights();
   m_container.reset(new ngl::BBox(-3.0, 3.0, -3.0, 3.0,-3.0, 3.0));
-  m_testFlock.reset(new Flock());
+  m_testFlock.reset(new Flock(m_cam, "BoidShader", m_mouseGlobalTX));
 }
 
 void NGLScene::initializeShader()
@@ -125,9 +125,6 @@ void NGLScene::paintGL()
   //loadMatrixToShader();
   ngl::VAOPrimitives::instance()->draw("football");
 
-  //SHADER INSTANCE
-  ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-
   //CAMERA TRANSFORMATION
   // Rotation based on the mouse position for our global transform
    ngl::Mat4 rotX;
@@ -143,11 +140,12 @@ void NGLScene::paintGL()
    m_mouseGlobalTX.m_m[ 3 ][ 2 ] = m_modelPos.m_z;
 
   //TEST FLOCK
-  m_testFlock->drawFlock(_targetTransform.getPosition(), shader, m_cam, m_mouseGlobalTX);
+  m_testFlock->drawFlock(_targetTransform.getPosition());
+  update();
 }
 
 
-void NGLScene::timerEvent(QTimerEvent *_event )
+/*void NGLScene::timerEvent(QTimerEvent *_event )
 {
   if(_event->timerId() == m_sphereUpdateTimer)
   {
@@ -158,7 +156,7 @@ void NGLScene::timerEvent(QTimerEvent *_event )
   }
   updateScene();
   update();
-}
+}*/
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -179,8 +177,8 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   case Qt::Key_Down : _targetTransform.addPosition(0.0f, 0.0f, 0.01f); break;
   case Qt::Key_Right : _targetTransform.addPosition(0.01f, 0.0f, 0.0f); break;
   case Qt::Key_Left : _targetTransform.addPosition(-0.01f, 0.0f, 0.0f); break;
-  case Qt::Key_Plus : m_testFlock->addBoid(); break;
-  case Qt::Key_Minus : m_testFlock->removeBoid(); break;
+  case Qt::Key_Plus : m_testFlock->addBoid(2); break;
+  case Qt::Key_Minus : m_testFlock->removeBoid(2); break;
   default : break;
   }
   // finally update the GLWindow and re-draw

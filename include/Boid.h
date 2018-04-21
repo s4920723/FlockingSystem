@@ -1,13 +1,16 @@
 #ifndef _BOID_H_
 #define _BOID_H_
 
+#include <string>
+#include <vector>
+#include <memory>
 #include <ngl/Vec3.h>
 #include <ngl/Mat4.h>
 #include <ngl/Camera.h>
 #include <ngl/Transformation.h>
 #include <ngl/ShaderLib.h>
 #include <ngl/BBox.h>
-#include <string>
+
 
 class Boid{
   public:
@@ -16,7 +19,7 @@ class Boid{
     /// @param _initPos sets the initial position for the boid
     /// @param _initVel sets the initial velocity for the boid
     //----------------------------------------------------------------------------------------------------------------------
-    Boid(ngl::Vec3 _initPos, ngl::Vec3 _initVel);
+    Boid(int _id, ngl::Vec3 _initPos, ngl::Vec3 _initVel);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief destructor for the boid class
     //----------------------------------------------------------------------------------------------------------------------
@@ -30,7 +33,7 @@ class Boid{
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Vec3 getVel();
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief returns the current transformations of the boid
+    /// @brief returns the current velocity of the boid
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Transformation getTransform();
     //----------------------------------------------------------------------------------------------------------------------
@@ -49,6 +52,11 @@ class Boid{
     //----------------------------------------------------------------------------------------------------------------------
     void drawBoid();
     //----------------------------------------------------------------------------------------------------------------------
+    /// @brief method that sets the uniforms for the M, MV, MVP and normal matricies
+    /// @param _container a bounding box to restrict the boid
+    //----------------------------------------------------------------------------------------------------------------------
+    void loadMatrixToShader(std::string shaderName, ngl::Camera _cam, ngl::Mat4 _mouseTX);
+    //----------------------------------------------------------------------------------------------------------------------
     /// @brief the containment behaviour that restricts the boids
     /// from exiting a bounding box
     /// @param _container a bounding box to restrict the boid
@@ -61,10 +69,37 @@ class Boid{
     /// @param _randomPos the target position of the boid
     //----------------------------------------------------------------------------------------------------------------------
     void wander(ngl::Vec3 _randomPos);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Aligns the velocity of the current boid with those
+    /// of neighbouring boids
+    /// @param _boidArray an array containing all the boids in
+    /// the flock
+    /// @param _awareRadius the radius around the boid within which it
+    /// becomes aware of other boids
+    //----------------------------------------------------------------------------------------------------------------------
+    void alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Redirects the velocity of the current boid in order to
+    /// avoid neighbouring boids
+    /// @param _boidArray an array containing all the boids in
+    /// the flock
+    /// @param _awareRadius the radius around the boid within which it
+    /// becomes aware of other boids
+    //----------------------------------------------------------------------------------------------------------------------
+    void separation(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Redirects the velocity of the current boid in order to
+    /// get closer to neighbouring boids
+    /// @param _boidArray an array containing all the boids in
+    /// the flock
+    /// @param _awareRadius the radius around the boid within which it
+    /// becomes aware of other boids
+    //----------------------------------------------------------------------------------------------------------------------
+    void cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius);
+    /// @brief Boid id number
+    int m_id;
 
   private:
-    /// @brief Boid id
-    int m_id;
     /// @brief Boid position
     ngl::Vec3 m_position;
     /// @brief Boid velocity

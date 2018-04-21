@@ -1,7 +1,6 @@
 #include "Flock.h"
 
 #include <iostream>
-#include <time.h>
 #include <ngl/Random.h>
 
 
@@ -11,6 +10,7 @@ Flock::Flock(ngl::Camera _cam, std::string _shaderName, ngl::Mat4 _mouseTX)
     m_cam = _cam;
     m_shaderName = _shaderName;
     m_mouseTX = _mouseTX;
+    m_idCounter = 0;
 }
 
 Flock::~Flock()
@@ -18,24 +18,33 @@ Flock::~Flock()
     std::cout << "Flock has been destroyed\n";
 }
 
-void Flock::addBoid()
+void Flock::addBoid(int _numBoids)
 {
-    ngl::Vec3 randPos = ngl::Random::instance()->getRandomVec3();
-    ngl::Vec3 randVel = ngl::Random::instance()->getRandomVec3();
-
-    std::cout << "New boid position: " << randPos.m_x << ", "
-              << randPos.m_y << ", " << randPos.m_z << "\n";
-    std::cout << "New boid velocity: " << randVel.m_x << ", "
-              << randVel.m_y << ", " << randVel.m_z << "\n";
-    boidArray.push_back(new Boid(randPos, randVel));
+    for (int i=0; i < _numBoids; i++)
+    {
+        ngl::Vec3 randPos = ngl::Random::instance()->getRandomVec3();
+        ngl::Vec3 randVel = ngl::Random::instance()->getRandomVec3();
+        m_idCounter++;
+        boidArray.push_back(std::unique_ptr<Boid>(new Boid(m_idCounter, randPos, randVel)));
+        std::cout << "CREATING BOID #" << m_idCounter << "\n";
+        std::cout << "New boid position: " << randPos.m_x << ", "
+                  << randPos.m_y << ", " << randPos.m_z << "\n";
+        std::cout << "New boid velocity: " << randVel.m_x << ", "
+                  << randVel.m_y << ", " << randVel.m_z << "\n";
+    }
 }
 
-void Flock::removeBoid()
+void Flock::removeBoid(int _numBoids)
 {
-    if (boidArray.size())
+    for (int i=0; i < _numBoids; i++)
     {
-        delete boidArray.back();
-        boidArray.pop_back();
+        if (boidArray.size())
+        {
+            boidArray.pop_back();
+
+            std::cout << "DELETING BOID #" << m_idCounter << "\n";
+            m_idCounter--;
+        }
     }
 }
 
@@ -59,7 +68,7 @@ void Flock::loadMatrixToShader(ngl::Transformation _boidTransform)
 }
 void Flock::drawFlock(ngl::Vec3 _targetPos)
 {
-    for (Boid* m : boidArray)
+    for (std::unique_ptr<Boid>& m : boidArray)
     {
         m->seek(_targetPos);
         m->wander(ngl::Random::instance()->getRandomVec3());
@@ -67,28 +76,4 @@ void Flock::drawFlock(ngl::Vec3 _targetPos)
         loadMatrixToShader(m->getTransform());
         m->drawBoid();
     }
-}
-
-ngl::Vec3 Flock::aligment()
-{
-    for (Boid* currentBoid : boidArray)
-    {
-        for (std::vector<Boid*>::iterator boidIterator = boidArray.begin() ; boidIterator != boidArray.end(); ++boidIterator)
-        {
-            //if (ngl::Vec3(currentBoid->getPos() - *boidIterator).length() < 1.0f)
-            {
-
-            }
-        }
-    }
-}
-
-ngl::Vec3 Flock::separation()
-{
-
-}
-
-ngl::Vec3 Flock::cohesion()
-{
-
 }
