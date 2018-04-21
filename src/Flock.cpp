@@ -66,14 +66,15 @@ void Flock::loadMatrixToShader(ngl::Transformation _boidTransform)
   shader->setUniform("normalMatrix",normalMatrix);
   shader->setUniform("M",M);
 }
+
 void Flock::drawFlock(ngl::Vec3 _targetPos)
 {
-    for (std::unique_ptr<Boid>& m : boidArray)
+    for (std::unique_ptr<Boid>& boid : boidArray)
     {
-        m->seek(_targetPos);
-        m->wander(ngl::Random::instance()->getRandomVec3());
-        m->move();
-        loadMatrixToShader(m->getTransform());
-        m->drawBoid();
+        boid->seek(_targetPos);
+        //m->wander(ngl::Random::instance()->getRandomVec3());
+        boid->move();
+        loadMatrixToShader(boid->getTransform());
+        boid->drawBoid();
     }
 }

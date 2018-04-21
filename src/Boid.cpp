@@ -52,8 +52,8 @@ void Boid::move()
   m_currentTransform.setPosition(m_position);
 
   //Rotation update
-  float rotAngle = acos((velocityTemp.dot(m_velocity)/(velocityTemp.length() * m_velocity.length())));
-  m_currentTransform.addRotation(0, rotAngle, 0);
+  /*float rotAngle = acos((velocityTemp.dot(m_velocity)/(velocityTemp.length() * m_velocity.length())));
+  m_currentTransform.addRotation(0, rotAngle, 0);*/
 }
 
 

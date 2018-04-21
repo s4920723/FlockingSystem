@@ -71,7 +71,7 @@ void NGLScene::initializeShader()
     boidShader->linkProgramObject(shaderProgram);
 
     (*boidShader)[shaderProgram]->use();
-    ngl::Material m(ngl::STDMAT::POLISHEDSILVER);
+    ngl::Material m(ngl::STDMAT::GOLD);
     m.loadToShader("material");
 
     boidShader->setUniform("viewerPos", m_cam.getEye().toVec3());
@@ -119,11 +119,13 @@ void NGLScene::paintGL()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
 
-  m_container->draw();
+  ngl::ShaderLib *shader = ngl::ShaderLib::instance();
+  (*shader)["BoidShader"]->use();
+  //m_container->draw();
   //TARGET
-  _targetTransform.setScale(0.03f, 0.03f, 0.03f);
+  //_targetTransform.setScale(0.03f, 0.03f, 0.03f);
   //loadMatrixToShader();
-  ngl::VAOPrimitives::instance()->draw("football");
+  //ngl::VAOPrimitives::instance()->draw("football");
 
   //CAMERA TRANSFORMATION
   // Rotation based on the mouse position for our global transform
@@ -138,7 +140,6 @@ void NGLScene::paintGL()
    m_mouseGlobalTX.m_m[ 3 ][ 0 ] = m_modelPos.m_x;
    m_mouseGlobalTX.m_m[ 3 ][ 1 ] = m_modelPos.m_y;
    m_mouseGlobalTX.m_m[ 3 ][ 2 ] = m_modelPos.m_z;
-
   //TEST FLOCK
   m_testFlock->drawFlock(_targetTransform.getPosition());
   update();
@@ -173,12 +174,14 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
       m_win.spinYFace=0;
       m_modelPos.set(ngl::Vec3::zero());
   break;
+  //Test Target controls
   case Qt::Key_Up : _targetTransform.addPosition(0.0f, 0.0f, -0.01f); break;
   case Qt::Key_Down : _targetTransform.addPosition(0.0f, 0.0f, 0.01f); break;
   case Qt::Key_Right : _targetTransform.addPosition(0.01f, 0.0f, 0.0f); break;
   case Qt::Key_Left : _targetTransform.addPosition(-0.01f, 0.0f, 0.0f); break;
-  case Qt::Key_Plus : m_testFlock->addBoid(2); break;
-  case Qt::Key_Minus : m_testFlock->removeBoid(2); break;
+  //Test Flock controls
+  case Qt::Key_Plus : m_testFlock->addBoid(1); break;
+  case Qt::Key_Minus : m_testFlock->removeBoid(1); break;
   default : break;
   }
   // finally update the GLWindow and re-draw

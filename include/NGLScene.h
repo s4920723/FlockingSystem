@@ -83,7 +83,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     void wheelEvent( QWheelEvent *_event) override;
 
-    void timerEvent( QTimerEvent *_event) override;
+    //void timerEvent( QTimerEvent *_event) override;
 
     void updateScene();
 
