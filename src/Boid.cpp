@@ -36,6 +36,25 @@ ngl::Transformation Boid::getTransform()
   return m_currentTransform;
 }
 
+void Boid::loadMatrixToShader(std::string _shaderName, ngl::Camera _cam, ngl::Mat4 _mouseTX)
+{
+  ngl::ShaderLib *shader = ngl::ShaderLib::instance();
+  (*shader)[_shaderName]->use();
+  ngl::Mat4 MV;
+  ngl::Mat4 MVP;
+  ngl::Mat3 normalMatrix;
+  ngl::Mat4 M;
+  M= _mouseTX * m_currentTransform.getMatrix();
+  MV= _cam.getViewMatrix()*M;
+  MVP= _cam.getProjectionMatrix() *MV;
+  normalMatrix=MV;
+  normalMatrix.inverse();
+  shader->setUniform("MV",MV);
+  shader->setUniform("MVP",MVP);
+  shader->setUniform("normalMatrix",normalMatrix);
+  shader->setUniform("M",M);
+}
+
 void Boid::drawBoid()
 {
     ngl::VAOPrimitives::instance() -> draw("troll");
@@ -106,11 +125,12 @@ void Boid::wander(ngl::Vec3 _randomPos)
 void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius)
 {
     ngl::Vec3 velocitySum;
-    int neighbourCount;
+    int neighbourCount = 0;
     velocitySum.zero();
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
     {
-        float distance = (otherBoid->getPos() - this->getPos()).length();
+        ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
+        float distance = distanceVec.length();
         if (this->m_id != otherBoid->m_id && distance < _awareRadius)
         {
             velocitySum += otherBoid->getPos();
@@ -131,11 +151,12 @@ void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awar
 void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius)
 {
     ngl::Vec3 positionSum;
-    int neighbourCount;
+    int neighbourCount = 0;
     positionSum.zero();
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
     {
-        float distance = (otherBoid->getPos() - this->getPos()).length();
+        ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
+        float distance = distanceVec.length();
         if (this->m_id != otherBoid->m_id && distance < _awareRadius)
         {
             positionSum += otherBoid->getPos();
@@ -157,11 +178,12 @@ void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awa
 void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius)
 {
     ngl::Vec3 positionSum;
-    int neighbourCount;
+    int neighbourCount = 0;
     positionSum.zero();
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
     {
-        float distance = (otherBoid->getPos() - this->m_position).length();
+        ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
+        float distance = distanceVec.length();
         if (this->m_id != otherBoid->m_id && distance < _awareRadius)
         {
             positionSum += otherBoid->getPos();

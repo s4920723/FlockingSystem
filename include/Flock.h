@@ -10,6 +10,7 @@
 #include <ngl/Mat4.h>
 #include <ngl/Camera.h>
 #include <ngl/ShaderLib.h>
+#include <ngl/BBox.h>
 
 
 class Flock{
@@ -21,7 +22,7 @@ class Flock{
     /// to shade the boids
     /// @param _mouseTX sets the mouse trackball transformations
     //----------------------------------------------------------------------------------------------------------------------
-    Flock(ngl::Camera _cam, std::string _shaderName, ngl::Mat4 _mouseTX);
+    Flock(ngl::Camera _cam, std::string _shaderName, ngl::Mat4 _mouseTX, ngl::BBox _container);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief destructor for the flock class
     //----------------------------------------------------------------------------------------------------------------------
@@ -50,7 +51,7 @@ class Flock{
 
   private:
     /// @brief an array of all the boids in the flock
-    std::vector<std::unique_ptr<Boid>> boidArray;
+    std::vector<std::unique_ptr<Boid>> m_boidArray;
     /// @brief the camera used for setting up the MVP uniform
     ngl::Camera m_cam;
     /// @brief the mouse control transformation used for MVP uniforms
@@ -59,6 +60,8 @@ class Flock{
     std::string m_shaderName;
     /// @brief a counter used to assign id numbers to boids
     int m_idCounter;
+    /// @brief the bounding box for the flock
+    ngl::BBox m_container;
 
 };
 #endif

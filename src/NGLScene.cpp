@@ -47,7 +47,7 @@ void NGLScene::initializeGL()
   initializeShader();
   createLights();
   m_container.reset(new ngl::BBox(-3.0, 3.0, -3.0, 3.0,-3.0, 3.0));
-  m_testFlock.reset(new Flock(m_cam, "BoidShader", m_mouseGlobalTX));
+  m_testFlock.reset(new Flock(m_cam, "BoidShader", m_mouseGlobalTX, m_container) );
 }
 
 void NGLScene::initializeShader()
@@ -121,11 +121,11 @@ void NGLScene::paintGL()
 
   ngl::ShaderLib *shader = ngl::ShaderLib::instance();
   (*shader)["BoidShader"]->use();
-  //m_container->draw();
+
   //TARGET
-  //_targetTransform.setScale(0.03f, 0.03f, 0.03f);
-  //loadMatrixToShader();
-  //ngl::VAOPrimitives::instance()->draw("football");
+  _targetTransform.setScale(0.03f, 0.03f, 0.03f);
+  loadMatrixToShader();
+  ngl::VAOPrimitives::instance()->draw("football");
 
   //CAMERA TRANSFORMATION
   // Rotation based on the mouse position for our global transform
@@ -142,6 +142,9 @@ void NGLScene::paintGL()
    m_mouseGlobalTX.m_m[ 3 ][ 2 ] = m_modelPos.m_z;
   //TEST FLOCK
   m_testFlock->drawFlock(_targetTransform.getPosition());
+
+
+  m_container->draw();
   update();
 }
 
