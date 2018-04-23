@@ -91,7 +91,7 @@ void Boid::seek(ngl::Vec3 _targetPos)
 void Boid::arrive(ngl::Vec3 _targetPos)
 {
     ngl::Vec3 desired = _targetPos - m_position;
-    if (desired.length() < 0.25f)
+    if (desired.length() < 0.05f)
     {
       m_maxSpeed = 0.0f;
     }

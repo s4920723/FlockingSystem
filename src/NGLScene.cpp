@@ -46,8 +46,8 @@ void NGLScene::initializeGL()
   initializeCamera({1, 1, 1}, {0, 0, 0}, {0, 1, 0});
   initializeShader();
   createLights();
-  m_container.reset(new ngl::BBox(-3.0, 3.0, -3.0, 3.0,-3.0, 3.0));
-  m_testFlock.reset(new Flock(m_cam, "BoidShader", m_mouseGlobalTX, m_container) );
+  m_container.reset(new ngl::BBox(-0.5, 0.5, -0.5, 0.5, -0.5, 0.5));
+  m_testFlock.reset(new Flock(m_cam, "BoidShader", m_mouseGlobalTX));
 }
 
 void NGLScene::initializeShader()
@@ -143,7 +143,8 @@ void NGLScene::paintGL()
   //TEST FLOCK
   m_testFlock->drawFlock(_targetTransform.getPosition());
 
-
+  _targetTransform.reset();
+  loadMatrixToShader();
   m_container->draw();
   update();
 }
@@ -183,7 +184,7 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   case Qt::Key_Right : _targetTransform.addPosition(0.01f, 0.0f, 0.0f); break;
   case Qt::Key_Left : _targetTransform.addPosition(-0.01f, 0.0f, 0.0f); break;
   //Test Flock controls
-  case Qt::Key_Plus : m_testFlock->addBoid(1); break;
+  case Qt::Key_Plus : m_testFlock->addBoid(1, m_container); break;
   case Qt::Key_Minus : m_testFlock->removeBoid(1); break;
   default : break;
   }

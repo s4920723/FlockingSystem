@@ -4,13 +4,12 @@
 #include <ngl/Random.h>
 
 
-Flock::Flock(ngl::Camera _cam, std::string _shaderName, ngl::Mat4 _mouseTX, ngl::BBox _container)
+Flock::Flock(ngl::Camera _cam, std::string _shaderName, ngl::Mat4 _mouseTX)
 {
     std::cout << "Flock has been created\n";
     m_cam = _cam;
     m_shaderName = _shaderName;
     m_mouseTX = _mouseTX;
-    m_container = _container;
     m_idCounter = 0;
 }
 
@@ -19,7 +18,7 @@ Flock::~Flock()
     std::cout << "Flock has been destroyed\n";
 }
 
-void Flock::addBoid(int _numBoids)
+void Flock::addBoid(int _numBoids, std::unique_ptr<ngl::BBox> &_container)
 {
     for (int i=0; i < _numBoids; i++)
     {
@@ -27,12 +26,14 @@ void Flock::addBoid(int _numBoids)
         randPos.zero();
         ngl::Vec3 randVel;
         randPos.zero();
-        while (randPos.m_x < m_container.maxX() &&  randPos.m_x > m_container.minX() &&
-               randPos.m_y < m_container.maxY() &&  randPos.m_y > m_container.minY() &&
-               randPos.m_z < m_container.maxZ() &&  randPos.m_z > m_container.minZ())
+        /*while (randPos.m_x > _container->maxX() &&  randPos.m_x < _container->minX() &&
+               randPos.m_y > _container->maxY() &&  randPos.m_y < _container->minY() &&
+               randPos.m_z > _container->maxZ() &&  randPos.m_z < _container->minZ())
         {
+
             randPos = ngl::Random::instance()->getRandomVec3();
-        }
+        }*/
+        randPos = ngl::Random::instance()->getRandomVec3();
         randVel = ngl::Random::instance()->getRandomVec3();
         m_idCounter++;
         m_boidArray.push_back(std::unique_ptr<Boid>(new Boid(m_idCounter, randPos, randVel)));
@@ -83,7 +84,7 @@ void Flock::drawFlock(ngl::Vec3 _targetPos)
     {
         boid->seek(_targetPos);
         //boid->wander(ngl::Random::instance()->getRandomVec3());
-        boid->cohesion(m_boidArray, 1.0f);
+        //boid->cohesion(m_boidArray, 1.0f);
         boid->move();
         boid->loadMatrixToShader(m_shaderName, m_cam, m_mouseTX);
         boid->drawBoid();

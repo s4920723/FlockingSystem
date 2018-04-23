@@ -22,7 +22,7 @@ class Flock{
     /// to shade the boids
     /// @param _mouseTX sets the mouse trackball transformations
     //----------------------------------------------------------------------------------------------------------------------
-    Flock(ngl::Camera _cam, std::string _shaderName, ngl::Mat4 _mouseTX, ngl::BBox _container);
+    Flock(ngl::Camera _cam, std::string _shaderName, ngl::Mat4 _mouseTX);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief destructor for the flock class
     //----------------------------------------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ class Flock{
     /// @brief creates and adds a single boid to the flock
     /// @param _numBoids the amount of boids that will be created
     //----------------------------------------------------------------------------------------------------------------------
-    void addBoid(int _numBoids);
+    void addBoid(int _numBoids, std::unique_ptr<ngl::BBox>& _container);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief removes the last boid that was added to the flock
     /// @param _numBoids the amout of boids that will be removed
