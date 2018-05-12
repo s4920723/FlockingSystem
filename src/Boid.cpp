@@ -58,6 +58,9 @@ void Boid::loadMatrixToShader(std::string _shaderName, ngl::Camera _cam, ngl::Ma
 void Boid::drawBoid()
 {
     ngl::VAOPrimitives::instance() ->draw("troll");
+    std::vector<ngl::Vec3> velocityVerts;
+    velocityVerts.push_back(m_position);
+    velocityVerts.push_back(m_velocity);
 }
 
 void Boid::move()
@@ -71,8 +74,9 @@ void Boid::move()
   m_currentTransform.setPosition(m_position);
 
   //Rotation update
-  /*float rotAngle = acos((velocityTemp.dot(m_velocity)/(velocityTemp.length() * m_velocity.length())));
-  m_currentTransform.addRotation(0, rotAngle, 0);*/
+  float yaw = -atan(m_velocity.m_y/sqrt(m_velocity.m_x * m_velocity.m_x + m_velocity.m_z * m_velocity.m_z)) * 57.295779524;
+  float pitch = atan2(m_velocity.m_x, m_velocity.m_z) * 57.295779524;
+  m_currentTransform.setRotation(yaw, pitch, 0);
 }
 
 
@@ -83,42 +87,52 @@ void Boid::seek(ngl::Vec3 _targetPos)
     desired *= m_maxSpeed;
     ngl::Vec3 steer = desired - m_velocity;
     steer.clamp(m_maxForce);
-    m_acceleration = steer;
+    arrive(_targetPos);
+    m_seekForce = steer;
 
-    //arrive(_targetPos);
+
 }
 
 void Boid::arrive(ngl::Vec3 _targetPos)
 {
     ngl::Vec3 desired = _targetPos - m_position;
-    if (desired.length() < 0.05f)
+    if (desired.length() < 0.1f)
     {
-      m_maxSpeed = 0.0f;
+      m_maxSpeed = 1/desired.length();
     }
 }
 
 void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
 {
+    ngl::Vec3 desired;
+    desired.set(1.0f, 1.0f, 1.0f);
     if (m_currentTransform.getPosition().m_x > _container->maxX())
-    m_acceleration = _container->getNormalArray()->left();
+    desired = _container->getNormalArray()->left();
 
     if (m_currentTransform.getPosition().m_x < _container->minX())
-    m_acceleration = _container->getNormalArray()->right();
+    desired = _container->getNormalArray()->right();
 
     if (m_currentTransform.getPosition().m_y > _container->maxY())
-    m_acceleration = _container->getNormalArray()->down();
+    desired = _container->getNormalArray()->down();
 
     if (m_currentTransform.getPosition().m_y < _container->minY())
-    m_acceleration = _container->getNormalArray()->up();
+    desired = _container->getNormalArray()->up();
 
     if (m_currentTransform.getPosition().m_z > _container->maxZ())
-    m_acceleration = _container->getNormalArray()->out();
+    desired = _container->getNormalArray()->out();
 
     if (m_currentTransform.getPosition().m_z < _container->minZ())
-    m_acceleration = _container->getNormalArray()->in();
+    desired = _container->getNormalArray()->in();
+
+    /*desired -= m_position;
+    desired.normalize();
+    desired *= m_maxSpeed;
+    ngl::Vec3 steer = desired - m_velocity;
+    steer.clamp(m_maxForce);*/
+    m_containmentForce += desired;
 }
 
-void Boid::wander(ngl::Vec3 _randomPos)
+void Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius, ngl::Vec3 _randomPos)
 {
     m_wanderCounter++;
     if (m_wanderCounter >= 200)
@@ -126,6 +140,23 @@ void Boid::wander(ngl::Vec3 _randomPos)
         seek(_randomPos);
         m_wanderCounter = 0;
     }
+
+    for (std::unique_ptr<Boid>& otherBoid : _boidArray)
+    {
+        ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
+        float distance = distanceVec.length();
+        if (this->m_id != otherBoid->m_id && distance < _awareRadius)
+        {
+            m_wanderForce *= 0;
+            break;
+        }
+    }
+
+    if (m_seekForce != ngl::Vec3(0.0f, 0.0f, 0.0f))
+    {
+        m_wanderForce *= 0;
+    }
+
 }
 
 void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius)
@@ -150,7 +181,7 @@ void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awar
         velocitySum *= m_maxSpeed;
         ngl::Vec3 steer = velocitySum - m_velocity;
         steer.clamp(m_maxForce);
-        m_acceleration += steer;
+        m_alignmentForce = steer;
     }
 }
 
@@ -176,7 +207,7 @@ void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awa
         positionSum *= m_maxSpeed;
         ngl::Vec3 steer = (positionSum*(-1)) - m_velocity;
         steer.clamp(m_maxForce);
-        m_acceleration += steer;
+        m_separationForce = steer;
     }
 }
 
@@ -202,7 +233,25 @@ void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray, float _aware
         positionSum.normalize();
         positionSum *= m_maxSpeed;
         ngl::Vec3 steer = positionSum - m_velocity;
-        steer.clamp(m_maxForce);
-        m_acceleration += steer;
+        steer.clamp(-m_maxForce, m_maxForce);
+        m_cohesionForce = steer;
     }
+}
+
+void Boid::weighBehaviours(float _seekWeight, float _wanderWeight, float _alignmentWeight, float _separationWeight, float _cohesionWeight)
+{
+    m_seekForce *= _seekWeight;
+    m_acceleration += m_seekForce;
+
+    m_wanderForce *= _wanderWeight;
+    m_acceleration += m_wanderForce;
+
+    m_alignmentForce *= _alignmentWeight;
+    m_acceleration += m_alignmentForce;
+
+    m_separationForce *= _separationWeight;
+    m_acceleration += m_separationForce;
+
+    m_cohesionForce *= _cohesionWeight;
+    m_acceleration += m_cohesionForce;
 }

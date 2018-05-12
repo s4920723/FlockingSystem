@@ -25,6 +25,4 @@ The code uses the Phong shader taken from the SimpleNGL demo for testing purpous
 
 
 ## Questions:
-* What is wrong with the ngl::BBox class
-* Random seeds
 *
