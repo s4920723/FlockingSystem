@@ -84,10 +84,11 @@ void Boid::seek(ngl::Vec3 _targetPos)
 {
     ngl::Vec3 desired = _targetPos - m_position;
     desired.normalize();
+    //arrive(_targetPos);
     desired *= m_maxSpeed;
     ngl::Vec3 steer = desired - m_velocity;
-    steer.clamp(m_maxForce);
-    arrive(_targetPos);
+    steer.clamp(-m_maxForce, m_maxForce);
+
     m_seekForce = steer;
 
 
@@ -99,6 +100,7 @@ void Boid::arrive(ngl::Vec3 _targetPos)
     if (desired.length() < 0.1f)
     {
       m_maxSpeed = 1/desired.length();
+      std::cout << "Arrival speed: " << m_maxSpeed << "\n" ;
     }
 }
 
@@ -124,12 +126,12 @@ void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
     if (m_currentTransform.getPosition().m_z < _container->minZ())
     desired = _container->getNormalArray()->in();
 
-    /*desired -= m_position;
+    desired -= m_position;
     desired.normalize();
     desired *= m_maxSpeed;
     ngl::Vec3 steer = desired - m_velocity;
-    steer.clamp(m_maxForce);*/
-    m_containmentForce += desired;
+    steer.clamp(-m_maxForce, m_maxForce);
+    m_acceleration = desired;
 }
 
 void Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius, ngl::Vec3 _randomPos)
@@ -180,7 +182,7 @@ void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awar
         velocitySum.normalize();
         velocitySum *= m_maxSpeed;
         ngl::Vec3 steer = velocitySum - m_velocity;
-        steer.clamp(m_maxForce);
+        steer.clamp(-m_maxForce, m_maxForce);
         m_alignmentForce = steer;
     }
 }
@@ -206,7 +208,7 @@ void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awa
         positionSum.normalize();
         positionSum *= m_maxSpeed;
         ngl::Vec3 steer = (positionSum*(-1)) - m_velocity;
-        steer.clamp(m_maxForce);
+        steer.clamp(-m_maxForce, m_maxForce);
         m_separationForce = steer;
     }
 }
@@ -229,10 +231,15 @@ void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray, float _aware
     }
     if (neighbourCount > 0)
     {
+        std::cout << "Number of neighbours: " << neighbourCount << "\n";
+        std::cout << "Position Sum: " << positionSum.m_x << ", " << positionSum.m_y << ", " << positionSum.m_z <<"\n";
+
         positionSum /= (float)neighbourCount;
+        std::cout << "Position Average: " << positionSum.m_x << ", " << positionSum.m_y << ", " << positionSum.m_z <<"\n";
+
         positionSum.normalize();
         positionSum *= m_maxSpeed;
-        ngl::Vec3 steer = positionSum - m_velocity;
+        ngl::Vec3 steer = positionSum - m_position;
         steer.clamp(-m_maxForce, m_maxForce);
         m_cohesionForce = steer;
     }
@@ -242,16 +249,21 @@ void Boid::weighBehaviours(float _seekWeight, float _wanderWeight, float _alignm
 {
     m_seekForce *= _seekWeight;
     m_acceleration += m_seekForce;
+    //std::cout << "Seeking force: " << m_seekForce.m_x << ", " << m_seekForce.m_y << ", " << m_seekForce.m_z << "\n";
 
     m_wanderForce *= _wanderWeight;
     m_acceleration += m_wanderForce;
+    //std::cout << "Wandering force: " << m_wanderForce.m_x << ", " << m_wanderForce.m_y << ", " << m_wanderForce.m_z << "\n";
 
     m_alignmentForce *= _alignmentWeight;
     m_acceleration += m_alignmentForce;
+    //std::cout << "Alignment force: " << m_alignmentForce.m_x << ", " << m_alignmentForce.m_y << ", " << m_alignmentForce.m_z << "\n";
 
     m_separationForce *= _separationWeight;
     m_acceleration += m_separationForce;
+    //std::cout << "Seeking force: " << m_separationForce.m_x << ", " << m_separationForce.m_y << ", " << m_separationForce.m_z <<  "\n";
 
     m_cohesionForce *= _cohesionWeight;
     m_acceleration += m_cohesionForce;
+    //std::cout << "Cohesion force: " << m_cohesionForce.m_x << ", " << m_cohesionForce.m_y << ", " << m_cohesionForce.m_z << "\n";
 }
