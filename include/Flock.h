@@ -47,19 +47,17 @@ class Flock{
     /// @brief draws the flock
     /// @param _boidTransform the updat
     //----------------------------------------------------------------------------------------------------------------------
-    void drawFlock(ngl::Vec3 _targetPos);
+    void drawFlock(ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container);
+    /// @brief the mouse control transformation used for M uniform
+    ngl::Mat4 m_mouseTX;
 
   private:
     /// @brief an array of all the boids in the flock
     std::vector<std::unique_ptr<Boid>> m_boidArray;
-    /// @brief the camera used for setting up the MVP uniform
+    /// @brief the camera used for setting up the MV/MVP uniform
     ngl::Camera m_cam;
-    /// @brief the mouse control transformation used for MVP uniforms
-    ngl::Mat4 m_mouseTX;
     /// @brief the string label of the shader program used for shading the boids
     std::string m_shaderName;
-    /// @brief a counter used to assign id numbers to boids
-    int m_idCounter;
     /// @brief the bounding box for the flock
     ngl::BBox m_container;
 

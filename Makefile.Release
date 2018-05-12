@@ -14,7 +14,7 @@ CXX           = cl
 DEFINES       = -DUNICODE -D_UNICODE -DWIN32 -DWIN64 -DQT5BUILD -DQT5BUILD -DNGL_DEBUG -DGL42 -DWIN32 -D_WIN32 -D_USE_MATH_DEFINES -DNO_DLL -DQT_QML_DEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG
 CFLAGS        = -nologo -Zc:wchar_t -FS -Zc:strictStrings -O2 -MD -W3 -w44456 -w44457 -w44458 $(DEFINES)
 CXXFLAGS      = -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -msse -msse2 -msse3 -O2 -MD -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -EHsc $(DEFINES)
-INCPATH       = -I. -Iinclude -I\NGL\include -I-I -Ic:\boost -IC:\Qt\5.10.1\msvc2017_64\include -IC:\Qt\5.10.1\msvc2017_64\include\QtOpenGL -IC:\Qt\5.10.1\msvc2017_64\include\QtWidgets -IC:\Qt\5.10.1\msvc2017_64\include\QtGui -IC:\Qt\5.10.1\msvc2017_64\include\QtANGLE -IC:\Qt\5.10.1\msvc2017_64\include\QtCore -Imoc -I\include -IC:\Qt\5.10.1\msvc2017_64\mkspecs\win32-msvc 
+INCPATH       = -I. -Iinclude -IC:\NGL\include -I\NGL\include -I-I -Ic:\boost -IC:\Qt\5.10.1\msvc2017_64\include -IC:\Qt\5.10.1\msvc2017_64\include\QtOpenGL -IC:\Qt\5.10.1\msvc2017_64\include\QtWidgets -IC:\Qt\5.10.1\msvc2017_64\include\QtGui -IC:\Qt\5.10.1\msvc2017_64\include\QtANGLE -IC:\Qt\5.10.1\msvc2017_64\include\QtCore -Imoc -I\include -IC:\Qt\5.10.1\msvc2017_64\mkspecs\win32-msvc 
 LINKER        = link
 LFLAGS        = /NOLOGO /DYNAMICBASE /NXCOMPAT /INCREMENTAL:NO /SUBSYSTEM:CONSOLE "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'"
 LIBS          = opengl32.lib /LIBPATH:C:\NGL\lib C:\NGL\lib\NGL.lib /LIBPATH:C:\Qt\5.10.1\msvc2017_64\lib C:\Qt\5.10.1\msvc2017_64\lib\Qt5OpenGL.lib C:\Qt\5.10.1\msvc2017_64\lib\Qt5Widgets.lib C:\Qt\5.10.1\msvc2017_64\lib\Qt5Gui.lib C:\Qt\5.10.1\msvc2017_64\lib\Qt5Core.lib 
@@ -253,9 +253,9 @@ obj\main.obj: src\main.cpp C:\Qt\5.10.1\msvc2017_64\include\QtGui\QGuiApplicatio
 		C:\Qt\5.10.1\msvc2017_64\include\QtCore\qsharedpointer_impl.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtCore\qsize.h \
 		include/NGLScene.h \
-		\NGL\include\ngl\Vec3.h \
-		\NGL\include\ngl\Types.h \
-		\NGL\include\ngl\glew.h \
+		C:\NGL\include\ngl\Vec3.h \
+		C:\NGL\include\ngl\Types.h \
+		C:\NGL\include\ngl\glew.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\QGLContext \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\qgl.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qopengl.h \
@@ -309,26 +309,26 @@ obj\main.obj: src\main.cpp C:\Qt\5.10.1\msvc2017_64\include\QtGui\QGuiApplicatio
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\qtopenglglobal.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\QSurfaceFormat \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qsurfaceformat.h \
-		\NGL\include\ngl\Mat4.h \
-		\NGL\include\ngl\Camera.h \
-		\NGL\include\ngl\Vec4.h \
-		\NGL\include\ngl\Vec2.h \
-		\NGL\include\ngl\RibExport.h \
-		\NGL\include\ngl\Plane.h \
-		\NGL\include\ngl\AABB.h \
-		\NGL\include\ngl\BBox.h \
-		\NGL\include\ngl\AbstractVAO.h \
-		\NGL\include\ngl\Transformation.h \
-		\NGL\include\ngl\NGLassert.h \
-		\NGL\include\ngl\Light.h \
-		\NGL\include\ngl\Colour.h \
+		C:\NGL\include\ngl\Mat4.h \
+		C:\NGL\include\ngl\Camera.h \
+		C:\NGL\include\ngl\Vec4.h \
+		C:\NGL\include\ngl\Vec2.h \
+		C:\NGL\include\ngl\RibExport.h \
+		C:\NGL\include\ngl\Plane.h \
+		C:\NGL\include\ngl\AABB.h \
+		C:\NGL\include\ngl\BBox.h \
+		C:\NGL\include\ngl\AbstractVAO.h \
+		C:\NGL\include\ngl\Transformation.h \
+		C:\NGL\include\ngl\NGLassert.h \
+		C:\NGL\include\ngl\Light.h \
+		C:\NGL\include\ngl\Colour.h \
 		include/Boid.h \
-		\NGL\include\ngl\ShaderLib.h \
-		\NGL\include\ngl\Shader.h \
-		\NGL\include\ngl\ShaderProgram.h \
-		\NGL\include\ngl\Util.h \
-		\NGL\include\ngl\Singleton.h \
-		\NGL\include\ngl\Mat3.h \
+		C:\NGL\include\ngl\ShaderLib.h \
+		C:\NGL\include\ngl\Shader.h \
+		C:\NGL\include\ngl\ShaderProgram.h \
+		C:\NGL\include\ngl\Util.h \
+		C:\NGL\include\ngl\Singleton.h \
+		C:\NGL\include\ngl\Mat3.h \
 		include/Flock.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\QOpenGLWindow \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qopenglwindow.h \
@@ -437,9 +437,9 @@ obj\NGLScene.obj: src\NGLScene.cpp C:\Qt\5.10.1\msvc2017_64\include\QtGui\QMouse
 		C:\Qt\5.10.1\msvc2017_64\include\QtCore\qeventloop.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qinputmethod.h \
 		include/NGLScene.h \
-		\NGL\include\ngl\Vec3.h \
-		\NGL\include\ngl\Types.h \
-		\NGL\include\ngl\glew.h \
+		C:\NGL\include\ngl\Vec3.h \
+		C:\NGL\include\ngl\Types.h \
+		C:\NGL\include\ngl\glew.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\QGLContext \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\qgl.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qopengl.h \
@@ -481,26 +481,26 @@ obj\NGLScene.obj: src\NGLScene.cpp C:\Qt\5.10.1\msvc2017_64\include\QtGui\QMouse
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\qtopenglglobal.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\QSurfaceFormat \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qsurfaceformat.h \
-		\NGL\include\ngl\Mat4.h \
-		\NGL\include\ngl\Camera.h \
-		\NGL\include\ngl\Vec4.h \
-		\NGL\include\ngl\Vec2.h \
-		\NGL\include\ngl\RibExport.h \
-		\NGL\include\ngl\Plane.h \
-		\NGL\include\ngl\AABB.h \
-		\NGL\include\ngl\BBox.h \
-		\NGL\include\ngl\AbstractVAO.h \
-		\NGL\include\ngl\Transformation.h \
-		\NGL\include\ngl\NGLassert.h \
-		\NGL\include\ngl\Light.h \
-		\NGL\include\ngl\Colour.h \
+		C:\NGL\include\ngl\Mat4.h \
+		C:\NGL\include\ngl\Camera.h \
+		C:\NGL\include\ngl\Vec4.h \
+		C:\NGL\include\ngl\Vec2.h \
+		C:\NGL\include\ngl\RibExport.h \
+		C:\NGL\include\ngl\Plane.h \
+		C:\NGL\include\ngl\AABB.h \
+		C:\NGL\include\ngl\BBox.h \
+		C:\NGL\include\ngl\AbstractVAO.h \
+		C:\NGL\include\ngl\Transformation.h \
+		C:\NGL\include\ngl\NGLassert.h \
+		C:\NGL\include\ngl\Light.h \
+		C:\NGL\include\ngl\Colour.h \
 		include/Boid.h \
-		\NGL\include\ngl\ShaderLib.h \
-		\NGL\include\ngl\Shader.h \
-		\NGL\include\ngl\ShaderProgram.h \
-		\NGL\include\ngl\Util.h \
-		\NGL\include\ngl\Singleton.h \
-		\NGL\include\ngl\Mat3.h \
+		C:\NGL\include\ngl\ShaderLib.h \
+		C:\NGL\include\ngl\Shader.h \
+		C:\NGL\include\ngl\ShaderProgram.h \
+		C:\NGL\include\ngl\Util.h \
+		C:\NGL\include\ngl\Singleton.h \
+		C:\NGL\include\ngl\Mat3.h \
 		include/Flock.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\QOpenGLWindow \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qopenglwindow.h \
@@ -521,14 +521,14 @@ obj\NGLScene.obj: src\NGLScene.cpp C:\Qt\5.10.1\msvc2017_64\include\QtGui\QMouse
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qopenglversionfunctions.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\QImage \
 		include/WindowParams.h \
-		\NGL\include\ngl\NGLInit.h \
-		\NGL\include\ngl\VAOPrimitives.h \
-		\NGL\include\ngl\Material.h
+		C:\NGL\include\ngl\NGLInit.h \
+		C:\NGL\include\ngl\VAOPrimitives.h \
+		C:\NGL\include\ngl\Material.h
 
 obj\NGLSceneMouseControls.obj: src\NGLSceneMouseControls.cpp include/NGLScene.h \
-		\NGL\include\ngl\Vec3.h \
-		\NGL\include\ngl\Types.h \
-		\NGL\include\ngl\glew.h \
+		C:\NGL\include\ngl\Vec3.h \
+		C:\NGL\include\ngl\Types.h \
+		C:\NGL\include\ngl\glew.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\QGLContext \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\qgl.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qopengl.h \
@@ -650,26 +650,26 @@ obj\NGLSceneMouseControls.obj: src\NGLSceneMouseControls.cpp include/NGLScene.h 
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\qtopenglglobal.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\QSurfaceFormat \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qsurfaceformat.h \
-		\NGL\include\ngl\Mat4.h \
-		\NGL\include\ngl\Camera.h \
-		\NGL\include\ngl\Vec4.h \
-		\NGL\include\ngl\Vec2.h \
-		\NGL\include\ngl\RibExport.h \
-		\NGL\include\ngl\Plane.h \
-		\NGL\include\ngl\AABB.h \
-		\NGL\include\ngl\BBox.h \
-		\NGL\include\ngl\AbstractVAO.h \
-		\NGL\include\ngl\Transformation.h \
-		\NGL\include\ngl\NGLassert.h \
-		\NGL\include\ngl\Light.h \
-		\NGL\include\ngl\Colour.h \
+		C:\NGL\include\ngl\Mat4.h \
+		C:\NGL\include\ngl\Camera.h \
+		C:\NGL\include\ngl\Vec4.h \
+		C:\NGL\include\ngl\Vec2.h \
+		C:\NGL\include\ngl\RibExport.h \
+		C:\NGL\include\ngl\Plane.h \
+		C:\NGL\include\ngl\AABB.h \
+		C:\NGL\include\ngl\BBox.h \
+		C:\NGL\include\ngl\AbstractVAO.h \
+		C:\NGL\include\ngl\Transformation.h \
+		C:\NGL\include\ngl\NGLassert.h \
+		C:\NGL\include\ngl\Light.h \
+		C:\NGL\include\ngl\Colour.h \
 		include/Boid.h \
-		\NGL\include\ngl\ShaderLib.h \
-		\NGL\include\ngl\Shader.h \
-		\NGL\include\ngl\ShaderProgram.h \
-		\NGL\include\ngl\Util.h \
-		\NGL\include\ngl\Singleton.h \
-		\NGL\include\ngl\Mat3.h \
+		C:\NGL\include\ngl\ShaderLib.h \
+		C:\NGL\include\ngl\Shader.h \
+		C:\NGL\include\ngl\ShaderProgram.h \
+		C:\NGL\include\ngl\Util.h \
+		C:\NGL\include\ngl\Singleton.h \
+		C:\NGL\include\ngl\Mat3.h \
 		include/Flock.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\QOpenGLWindow \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qopenglwindow.h \
@@ -693,9 +693,9 @@ obj\NGLSceneMouseControls.obj: src\NGLSceneMouseControls.cpp include/NGLScene.h 
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\QMouseEvent
 
 obj\Boid.obj: src\Boid.cpp include/Boid.h \
-		\NGL\include\ngl\Vec3.h \
-		\NGL\include\ngl\Types.h \
-		\NGL\include\ngl\glew.h \
+		C:\NGL\include\ngl\Vec3.h \
+		C:\NGL\include\ngl\Types.h \
+		C:\NGL\include\ngl\glew.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\QGLContext \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\qgl.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qopengl.h \
@@ -817,31 +817,31 @@ obj\Boid.obj: src\Boid.cpp include/Boid.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\qtopenglglobal.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\QSurfaceFormat \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qsurfaceformat.h \
-		\NGL\include\ngl\Mat4.h \
-		\NGL\include\ngl\Camera.h \
-		\NGL\include\ngl\Vec4.h \
-		\NGL\include\ngl\Vec2.h \
-		\NGL\include\ngl\RibExport.h \
-		\NGL\include\ngl\Plane.h \
-		\NGL\include\ngl\AABB.h \
-		\NGL\include\ngl\BBox.h \
-		\NGL\include\ngl\AbstractVAO.h \
-		\NGL\include\ngl\Transformation.h \
-		\NGL\include\ngl\NGLassert.h \
-		\NGL\include\ngl\ShaderLib.h \
-		\NGL\include\ngl\Colour.h \
-		\NGL\include\ngl\Shader.h \
-		\NGL\include\ngl\ShaderProgram.h \
-		\NGL\include\ngl\Util.h \
-		\NGL\include\ngl\Singleton.h \
-		\NGL\include\ngl\Mat3.h \
-		\NGL\include\ngl\VAOPrimitives.h
+		C:\NGL\include\ngl\Mat4.h \
+		C:\NGL\include\ngl\Camera.h \
+		C:\NGL\include\ngl\Vec4.h \
+		C:\NGL\include\ngl\Vec2.h \
+		C:\NGL\include\ngl\RibExport.h \
+		C:\NGL\include\ngl\Plane.h \
+		C:\NGL\include\ngl\AABB.h \
+		C:\NGL\include\ngl\BBox.h \
+		C:\NGL\include\ngl\AbstractVAO.h \
+		C:\NGL\include\ngl\Transformation.h \
+		C:\NGL\include\ngl\NGLassert.h \
+		C:\NGL\include\ngl\ShaderLib.h \
+		C:\NGL\include\ngl\Colour.h \
+		C:\NGL\include\ngl\Shader.h \
+		C:\NGL\include\ngl\ShaderProgram.h \
+		C:\NGL\include\ngl\Util.h \
+		C:\NGL\include\ngl\Singleton.h \
+		C:\NGL\include\ngl\Mat3.h \
+		C:\NGL\include\ngl\VAOPrimitives.h
 
 obj\Flock.obj: src\Flock.cpp include/Flock.h \
 		include/Boid.h \
-		\NGL\include\ngl\Vec3.h \
-		\NGL\include\ngl\Types.h \
-		\NGL\include\ngl\glew.h \
+		C:\NGL\include\ngl\Vec3.h \
+		C:\NGL\include\ngl\Types.h \
+		C:\NGL\include\ngl\glew.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\QGLContext \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\qgl.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qopengl.h \
@@ -963,25 +963,25 @@ obj\Flock.obj: src\Flock.cpp include/Flock.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtOpenGL\qtopenglglobal.h \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\QSurfaceFormat \
 		C:\Qt\5.10.1\msvc2017_64\include\QtGui\qsurfaceformat.h \
-		\NGL\include\ngl\Mat4.h \
-		\NGL\include\ngl\Camera.h \
-		\NGL\include\ngl\Vec4.h \
-		\NGL\include\ngl\Vec2.h \
-		\NGL\include\ngl\RibExport.h \
-		\NGL\include\ngl\Plane.h \
-		\NGL\include\ngl\AABB.h \
-		\NGL\include\ngl\BBox.h \
-		\NGL\include\ngl\AbstractVAO.h \
-		\NGL\include\ngl\Transformation.h \
-		\NGL\include\ngl\NGLassert.h \
-		\NGL\include\ngl\ShaderLib.h \
-		\NGL\include\ngl\Colour.h \
-		\NGL\include\ngl\Shader.h \
-		\NGL\include\ngl\ShaderProgram.h \
-		\NGL\include\ngl\Util.h \
-		\NGL\include\ngl\Singleton.h \
-		\NGL\include\ngl\Mat3.h \
-		\NGL\include\ngl\Random.h
+		C:\NGL\include\ngl\Mat4.h \
+		C:\NGL\include\ngl\Camera.h \
+		C:\NGL\include\ngl\Vec4.h \
+		C:\NGL\include\ngl\Vec2.h \
+		C:\NGL\include\ngl\RibExport.h \
+		C:\NGL\include\ngl\Plane.h \
+		C:\NGL\include\ngl\AABB.h \
+		C:\NGL\include\ngl\BBox.h \
+		C:\NGL\include\ngl\AbstractVAO.h \
+		C:\NGL\include\ngl\Transformation.h \
+		C:\NGL\include\ngl\NGLassert.h \
+		C:\NGL\include\ngl\ShaderLib.h \
+		C:\NGL\include\ngl\Colour.h \
+		C:\NGL\include\ngl\Shader.h \
+		C:\NGL\include\ngl\ShaderProgram.h \
+		C:\NGL\include\ngl\Util.h \
+		C:\NGL\include\ngl\Singleton.h \
+		C:\NGL\include\ngl\Mat3.h \
+		C:\NGL\include\ngl\Random.h
 
 ####### Install
 

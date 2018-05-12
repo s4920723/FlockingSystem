@@ -7,14 +7,14 @@ The code uses the Phong shader taken from the SimpleNGL demo for testing purpous
 
 ## To do list:
 * Boid rotation that matches the direction of movement.
-* A boudning box that limits the movement of the boids.
+* ~~A boudning box that limits the movement of the boids.~~
 * Geomtry to replace the placeholder model (currently using the troll from ngl/VAOPrimitives).
 * ~~Camera controls.~~
 * ~~The ability of creating more than one boid.~~
 * ~~The ability to delete boids.~~
 * Boid flocking behaviours.
 * The ability to place obstacles that the boids navigate around.
-* Tidy up code after testing boids, flocks and targets
+* ~~Tidy up code after testing boids, flocks and targets.~~
 
 ## Stretch goals:
 * GUI using QTcreator's design tools.

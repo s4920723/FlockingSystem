@@ -61,7 +61,7 @@ class Boid{
     /// from exiting a bounding box
     /// @param _container a bounding box to restrict the boid
     //----------------------------------------------------------------------------------------------------------------------
-    void containment(ngl::BBox _container);
+    void containment(std::unique_ptr<ngl::BBox> &_container);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief the wandering behaviour of the boid which is only
     /// active if it has no neighbouring boids. Similar to seeking
@@ -100,6 +100,8 @@ class Boid{
     int m_id;
 
   private:
+
+
     /// @brief Boid position
     ngl::Vec3 m_position;
     /// @brief Boid velocity
@@ -107,10 +109,10 @@ class Boid{
     /// @brief Boid acceleration
     ngl::Vec3 m_acceleration;
     /// @brief The maximum velocity of a vector
-    float m_maxSpeed = 0.01f;
+    float m_maxSpeed = 0.005f;
     /// @brief Modifier that regulates the amount of force
     /// a behvaiour is exhibiting on the boid
-    float m_maxForce = 0.001f;
+    float m_maxForce = 0.0001f;
     /// @brief The current transformation of the boid
     ngl::Transformation m_currentTransform;
     /// @brief Timer for the change in the wandering behaviour
