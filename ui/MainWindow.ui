@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>972</width>
-    <height>656</height>
+    <width>1016</width>
+    <height>635</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,21 +15,70 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="s_mainWindowGridLayout">
-    <item row="0" column="1">
-     <widget class="QGroupBox" name="s_transformGB">
+    <item row="0" column="1" colspan="2">
+     <widget class="QGroupBox" name="s_addRemoveBoids">
       <property name="title">
-       <string>Transform</string>
+       <string>Add/Remove Boids</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout"/>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="1" column="0">
+        <widget class="QSpinBox" name="s_removeBoidsAmount"/>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="s_totalAmount">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="s_addBoidsButton">
+         <property name="text">
+          <string>Add Boids</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="s_removeBoidsButton">
+         <property name="text">
+          <string>Delete Boids</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="totalAmountLabel">
+         <property name="text">
+          <string>Total Amount of Boids:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QSpinBox" name="s_addBoidsAmount"/>
+       </item>
+      </layout>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QGroupBox" name="s_drawGB">
+    <item row="1" column="1" colspan="2">
+     <widget class="QGroupBox" name="s_Behaviours">
       <property name="title">
-       <string>Draw</string>
+       <string>Behaviour Controls</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="0">
+       <item row="4" column="0">
+        <widget class="QSlider" name="s_separationSlider">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="alignmentLabel">
+         <property name="text">
+          <string>Alignment</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -41,6 +90,40 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="2" column="0">
+        <widget class="QSlider" name="s_cohesionSlider">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="separationLabel">
+         <property name="text">
+          <string>Separation</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="cohesionLabel">
+         <property name="text">
+          <string>Cohesion</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QSlider" name="s_alignmentSlider">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -65,7 +148,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>972</width>
+     <width>1016</width>
      <height>21</height>
     </rect>
    </property>

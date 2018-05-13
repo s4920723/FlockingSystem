@@ -17,12 +17,9 @@ The code uses the Phong shader taken from the SimpleNGL demo for testing purpous
 * ~~Tidy up code after testing boids, flocks and targets.~~
 
 ## Stretch goals:
-* GUI using QTcreator's design tools.
+* Draw direction.
+* ~~GUI using QTcreator's design tools.~~
 * Custom shaders.
 * Predator boids.
 * Motion paths using simple GL lines.
 * Flow fields.
-
-
-## Questions:
-*

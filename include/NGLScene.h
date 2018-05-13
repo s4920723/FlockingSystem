@@ -9,6 +9,8 @@
 #include "Boid.h"
 #include "Flock.h"
 
+#include <QEvent>
+#include <QResizeEvent>
 #include <QOpenGLWidget>
 #include "WindowParams.h"
 //----------------------------------------------------------------------------------------------------------------------
@@ -26,6 +28,7 @@
 
 class NGLScene : public QOpenGLWidget
 {
+  Q_OBJECT
   public:
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief ctor for our NGL drawing class
@@ -52,8 +55,28 @@ class NGLScene : public QOpenGLWidget
     //----------------------------------------------------------------------------------------------------------------------
     void paintGL() override;
 
-private:
+public slots:
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets the number of boids that will be created if the addBoids method is called
+    /// @param [in] _numOfBoids the amount of boids that will be created
+    //----------------------------------------------------------------------------------------------------------------------
+    void setAddBoids(int _numOfBoids);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets the number of boids that will be deleted if the removeBoids method is called
+    /// @param [in] _numOfBoids the amount of boids that will be removed
+    //----------------------------------------------------------------------------------------------------------------------
+    void setRemoveBoids(int _numOfBoids);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Adds the amount of boids set by setAddBoids
+    //----------------------------------------------------------------------------------------------------------------------
+    void addBoids();
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Removes the amount of boids set by setRemoveBoids
+    //----------------------------------------------------------------------------------------------------------------------
+    void removeBoids();
 
+
+private:
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Qt Event called when a key is pressed
     /// @param [in] _event the Qt event to query for size etc
@@ -108,6 +131,9 @@ private:
     ngl::Transformation _targetTransform;
 
     std::unique_ptr<ngl::BBox> m_container;
+
+    int m_numOfAddBoids;
+    int m_numOfRemoveBoids;
 
 };
 

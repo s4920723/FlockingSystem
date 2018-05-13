@@ -8,6 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), m_ui(new Ui::MainW
   m_glContext=new  NGLScene(this);
 
   m_ui->s_mainWindowGridLayout->addWidget(m_glContext,0,0,2,1);
+  connect(m_ui->s_addBoidsAmount,SIGNAL(valueChanged(int)),m_glContext,SLOT(setAddBoids(int)));
+  connect(m_ui->s_removeBoidsAmount,SIGNAL(valueChanged(int)),m_glContext,SLOT(setRemoveBoids(int)));
+  connect(m_ui->s_addBoidsButton, SIGNAL(clicked()),m_glContext,SLOT(addBoids()));
+  connect(m_ui->s_removeBoidsButton, SIGNAL(clicked()),m_glContext,SLOT(removeBoids()));
+
 }
 
 MainWindow::~MainWindow()

@@ -196,3 +196,27 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
 
     update();
 }
+
+//-----------SLOTS-----------
+void NGLScene::setAddBoids(int _numOfBoids)
+{
+    m_numOfAddBoids = _numOfBoids;
+    std::cout << m_numOfAddBoids << " BOIDS ARE PREPARED TO BE ADDED \n";
+}
+
+void NGLScene::setRemoveBoids(int _numOfBoids)
+{
+    m_numOfRemoveBoids = _numOfBoids;
+}
+
+void NGLScene::addBoids()
+{
+    m_testFlock->addBoid(m_numOfAddBoids, m_container);
+    update();
+}
+
+void NGLScene::removeBoids()
+{
+    m_testFlock->removeBoid(m_numOfRemoveBoids);
+    update();
+}
