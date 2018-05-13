@@ -126,11 +126,11 @@ void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
     if (m_currentTransform.getPosition().m_z < _container->minZ())
     desired = _container->getNormalArray()->in();
 
-    desired -= m_position;
-    desired.normalize();
-    desired *= m_maxSpeed;
-    ngl::Vec3 steer = desired - m_velocity;
-    steer.clamp(-m_maxForce, m_maxForce);
+//    desired -= m_position;
+//    desired.normalize();
+//    desired *= m_maxSpeed;
+//    ngl::Vec3 steer = desired - m_velocity;
+//    steer.clamp(-m_maxForce, m_maxForce);
     m_acceleration = desired;
 }
 
@@ -231,12 +231,7 @@ void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray, float _aware
     }
     if (neighbourCount > 0)
     {
-        std::cout << "Number of neighbours: " << neighbourCount << "\n";
-        std::cout << "Position Sum: " << positionSum.m_x << ", " << positionSum.m_y << ", " << positionSum.m_z <<"\n";
-
         positionSum /= (float)neighbourCount;
-        std::cout << "Position Average: " << positionSum.m_x << ", " << positionSum.m_y << ", " << positionSum.m_z <<"\n";
-
         positionSum.normalize();
         positionSum *= m_maxSpeed;
         ngl::Vec3 steer = positionSum - m_position;

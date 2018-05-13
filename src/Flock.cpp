@@ -53,12 +53,12 @@ void Flock::drawFlock(ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_contain
     {
         boid->seek(_targetPos);
         boid->wander(m_boidArray, 0.1f, ngl::Random::instance()->getRandomVec3());
-        boid->alignment(m_boidArray, 0.1f);
-        boid->cohesion(m_boidArray, 0.1f);
-        boid->separation(m_boidArray, 0.1f);
+        boid->alignment(m_boidArray, 0.3f);
+        boid->cohesion(m_boidArray, 0.3f);
+        boid->separation(m_boidArray, 0.3f);
         //boid->containment(_container);
         //SEEK, WANDER, ALIGN, SEPARATE, COHESION
-        boid->weighBehaviours(0.0f, 0.0f, 0.0f, 1.0f, 2.0f);
+        boid->weighBehaviours(1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
         boid->move();
         boid->loadMatrixToShader(m_shaderName, m_cam, m_mouseTX);
