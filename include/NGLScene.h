@@ -9,7 +9,7 @@
 #include "Boid.h"
 #include "Flock.h"
 
-#include <QOpenGLWindow>
+#include <QOpenGLWidget>
 #include "WindowParams.h"
 //----------------------------------------------------------------------------------------------------------------------
 /// @file NGLScene.h
@@ -24,18 +24,24 @@
 /// put in this file
 //----------------------------------------------------------------------------------------------------------------------
 
-class NGLScene : public QOpenGLWindow
+class NGLScene : public QOpenGLWidget
 {
   public:
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief ctor for our NGL drawing class
     /// @param [in] parent the parent window to the class
     //----------------------------------------------------------------------------------------------------------------------
-    NGLScene();
+    NGLScene(QWidget *_parent);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief dtor must close down ngl and release OpenGL resources
     //----------------------------------------------------------------------------------------------------------------------
     ~NGLScene();
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief this is called whenever the window is re-sized
+    /// @param[in] _w the width of the resized window
+    /// @param[in] _h the height of the resized window
+    //----------------------------------------------------------------------------------------------------------------------
+    void resizeGL(int _w , int _h);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief the initialize class is called once when the window is created and we have a valid GL context
     /// use this to setup any default GL stuff
@@ -45,11 +51,6 @@ class NGLScene : public QOpenGLWindow
     /// @brief this is called everytime we want to draw the scene
     //----------------------------------------------------------------------------------------------------------------------
     void paintGL() override;
-    //----------------------------------------------------------------------------------------------------------------------
-    /// @brief this is called everytime we resize the window
-    //----------------------------------------------------------------------------------------------------------------------
-    void resizeGL(int _w, int _h) override;
-
 
 private:
 

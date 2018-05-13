@@ -11,10 +11,12 @@
 #include <initializer_list>
 #include <ngl/VAOPrimitives.h>
 
-NGLScene::NGLScene()
+NGLScene::NGLScene( QWidget *_parent ) : QOpenGLWidget( _parent )
 {
-  // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
-  setTitle("Flocking System s4920723");
+    // set this widget to have the initial keyboard focus
+    setFocus();
+    // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
+    this->resize(_parent->size());
 }
 
 
