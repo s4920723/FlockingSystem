@@ -105,7 +105,7 @@ class Boid{
     /// @param _separationWeight A multiplier for the separation behaviour vector
     /// @param _alignmentWeight A multiplier for the cohesion behaviour vector
     //----------------------------------------------------------------------------------------------------------------------
-    void weighBehaviours(float _seekWeight, float _wanderWeight, float _alignmentWeight, float _separationWeight, float _cohesionWeight);
+    void weighBehaviours(float _soloWeight, float _alignmentWeight, float _separationWeight, float _cohesionWeight);
     /// @brief Boid id number
     int m_id;
 

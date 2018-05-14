@@ -240,13 +240,13 @@ void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray, float _aware
     }
 }
 
-void Boid::weighBehaviours(float _seekWeight, float _wanderWeight, float _alignmentWeight, float _separationWeight, float _cohesionWeight)
+void Boid::weighBehaviours(float _soloWeight, float _alignmentWeight, float _separationWeight, float _cohesionWeight)
 {
-    m_seekForce *= _seekWeight;
+    m_seekForce *= _soloWeight;
     m_acceleration += m_seekForce;
     //std::cout << "Seeking force: " << m_seekForce.m_x << ", " << m_seekForce.m_y << ", " << m_seekForce.m_z << "\n";
 
-    m_wanderForce *= _wanderWeight;
+    m_wanderForce *= _soloWeight;
     m_acceleration += m_wanderForce;
     //std::cout << "Wandering force: " << m_wanderForce.m_x << ", " << m_wanderForce.m_y << ", " << m_wanderForce.m_z << "\n";
 

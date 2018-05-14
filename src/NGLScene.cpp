@@ -145,6 +145,7 @@ void NGLScene::paintGL()
    ngl::VAOPrimitives::instance()->draw("football");
 
   //TEST FLOCK
+
   m_testFlock->drawFlock(_targetTransform.getPosition(), m_container);
 
   _targetTransform.reset();
@@ -197,6 +198,12 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
     update();
 }
 
+QString NGLScene::getFlockSize()
+{
+    QString flockSize = QString::number(m_testFlock->getFlockSize());
+    return flockSize;
+}
+
 //-----------SLOTS-----------
 void NGLScene::setAddBoids(int _numOfBoids)
 {
@@ -219,4 +226,20 @@ void NGLScene::removeBoids()
 {
     m_testFlock->removeBoid(m_numOfRemoveBoids);
     update();
+}
+
+void NGLScene::setCohesion(int _weight)
+{
+
+    m_cohesionWeight = static_cast<float>_weight * 0.01;
+}
+
+void NGLScene::setSeparation(int _weight)
+{
+    m_separationWeight = static_cast<float>_weight * 0.01;
+}
+
+void NGLScene::setAlignment(int _weight)
+{
+    m_alignmentWeight = static_cast<float>_weight * 0.01;
 }

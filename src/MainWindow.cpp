@@ -12,7 +12,10 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), m_ui(new Ui::MainW
   connect(m_ui->s_removeBoidsAmount,SIGNAL(valueChanged(int)),m_glContext,SLOT(setRemoveBoids(int)));
   connect(m_ui->s_addBoidsButton, SIGNAL(clicked()),m_glContext,SLOT(addBoids()));
   connect(m_ui->s_removeBoidsButton, SIGNAL(clicked()),m_glContext,SLOT(removeBoids()));
-
+  m_ui->s_totalAmount->setText(m_glContext->getFlockSize());
+  connect(m_ui->s_cohesionSlider, SIGNAL(sliderMoved(int)), m_glContext, SLOT(setCohesion(int)));
+  connect(m_ui->s_separationSlider, SIGNAL(sliderMoved(int)), m_glContext, SLOT(setSeparation(int)));
+  connect(m_ui->s_alignmentSlider, SIGNAL(sliderMoved(int)), m_glContext, SLOT(setAlignment(int)));
 }
 
 MainWindow::~MainWindow()

@@ -9,6 +9,7 @@
 #include "Boid.h"
 #include "Flock.h"
 
+#include <QString>
 #include <QEvent>
 #include <QResizeEvent>
 #include <QOpenGLWidget>
@@ -54,6 +55,10 @@ class NGLScene : public QOpenGLWidget
     /// @brief this is called everytime we want to draw the scene
     //----------------------------------------------------------------------------------------------------------------------
     void paintGL() override;
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Queries the size of the flock and returns a QString with the number of boids
+    //----------------------------------------------------------------------------------------------------------------------
+    QString getFlockSize();
 
 public slots:
     //----------------------------------------------------------------------------------------------------------------------
@@ -74,6 +79,21 @@ public slots:
     /// @brief Removes the amount of boids set by setRemoveBoids
     //----------------------------------------------------------------------------------------------------------------------
     void removeBoids();
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets how much influence the cohesion behaviour has on the boid's movement
+    /// @param _weight a value assigned to the cohesion behaviour's weight
+    //----------------------------------------------------------------------------------------------------------------------
+    void setCohesion(int _weight);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets how much influence the separation behaviour has on the boid's movement
+    /// @param _weight a value assigned to the separation behaviour's weight
+    //----------------------------------------------------------------------------------------------------------------------
+    void setSeparation(int _weight);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets how much influence the alignment behaviour has on the boid's movement
+    /// @param _weight a value assigned to the alignment behaviour's weight
+    //----------------------------------------------------------------------------------------------------------------------
+    void setAlignment(int _weight);
 
 
 private:
@@ -134,6 +154,9 @@ private:
 
     int m_numOfAddBoids;
     int m_numOfRemoveBoids;
+    float m_alignmentWeight;
+    float m_separationWeight;
+    float m_cohesionWeight;
 
 };
 

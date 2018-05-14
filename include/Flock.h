@@ -48,6 +48,10 @@ class Flock{
     /// @param _boidTransform the updat
     //----------------------------------------------------------------------------------------------------------------------
     void drawFlock(ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Returns the size of the flock array
+    //----------------------------------------------------------------------------------------------------------------------
+    int getFlockSize();
     /// @brief the mouse control transformation used for M uniform
     ngl::Mat4 m_mouseTX;
 

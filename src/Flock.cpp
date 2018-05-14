@@ -46,6 +46,12 @@ void Flock::removeBoid(int _numBoids)
     }
 }
 
+int Flock::getFlockSize()
+{
+    return m_boidArray.size();
+}
+
+
 
 void Flock::drawFlock(ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container)
 {
@@ -58,7 +64,7 @@ void Flock::drawFlock(ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_contain
         boid->separation(m_boidArray, 0.3f);
         //boid->containment(_container);
         //SEEK, WANDER, ALIGN, SEPARATE, COHESION
-        boid->weighBehaviours(1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        boid->weighBehaviours(1.0f, 0.0f, 0.0f, 0.0f);
 
         boid->move();
         boid->loadMatrixToShader(m_shaderName, m_cam, m_mouseTX);
