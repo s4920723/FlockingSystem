@@ -146,7 +146,7 @@ void NGLScene::paintGL()
 
   //TEST FLOCK
 
-  m_testFlock->drawFlock(_targetTransform.getPosition(), m_container);
+  m_testFlock->drawFlock(0.3f, m_weightMap, _targetTransform.getPosition(), m_container);
 
   _targetTransform.reset();
   loadMatrixToShader();
@@ -228,18 +228,42 @@ void NGLScene::removeBoids()
     update();
 }
 
+void NGLScene::setSeekWeight(int _weight)
+{
+    m_weightMap.at("seekWeight") = static_cast<float>(_weight) * 0.01;
+}
+
 void NGLScene::setCohesion(int _weight)
 {
-
-    m_cohesionWeight = static_cast<float>_weight * 0.01;
+    m_weightMap.at("cohesionWeight") = static_cast<float>(_weight) * 0.01;
 }
 
 void NGLScene::setSeparation(int _weight)
 {
-    m_separationWeight = static_cast<float>_weight * 0.01;
+    m_weightMap.at("separationWeight") = static_cast<float>(_weight) * 0.01;
 }
 
 void NGLScene::setAlignment(int _weight)
 {
-    m_alignmentWeight = static_cast<float>_weight * 0.01;
+   m_weightMap.at("alignmentWeight") = static_cast<float>(_weight) * 0.01;
+}
+
+void NGLScene::setMaxSpeed(int _maxSpeed)
+{
+    m_attributes.at("maxSpeed") =  static_cast<float>(_maxSpeed) * 0.01;
+}
+
+void NGLScene::setMaxForce(int _maxForce)
+{
+    m_attributes.at("maxForce") =  static_cast<float>(_maxForce) * 0.01;
+}
+
+void NGLScene::setAwareness(int _awarenessRadius)
+{
+    m_attributes.at("awarenessRadius") =  static_cast<float>(_awarenessRadius) * 0.01;
+}
+
+void NGLScene::activateTarget(bool _active)
+{
+    m_targetActive = _active;
 }

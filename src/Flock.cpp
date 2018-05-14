@@ -52,20 +52,21 @@ int Flock::getFlockSize()
 }
 
 
-
-void Flock::drawFlock(ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container)
+void Flock::drawFlock(float _awarenessRadius, std::map<std::string, float> _weights,
+                      ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container)
 {
     for (std::unique_ptr<Boid>& boid : m_boidArray)
     {
         boid->seek(_targetPos);
-        boid->wander(m_boidArray, 0.1f, ngl::Random::instance()->getRandomVec3());
-        boid->alignment(m_boidArray, 0.3f);
-        boid->cohesion(m_boidArray, 0.3f);
-        boid->separation(m_boidArray, 0.3f);
-        //boid->containment(_container);
-        //SEEK, WANDER, ALIGN, SEPARATE, COHESION
-        boid->weighBehaviours(1.0f, 0.0f, 0.0f, 0.0f);
-
+        boid->wander(m_boidArray, _awarenessRadius, ngl::Random::instance()->getRandomVec3());
+        boid->alignment(m_boidArray, _awarenessRadius);
+        boid->cohesion(m_boidArray, _awarenessRadius);
+        boid->separation(m_boidArray, _awarenessRadius);
+        boid->containment(_container);
+        boid->weighBehaviours(_weights.at("seekWeight"),
+                              _weights.at("alignmentWeight"),
+                              _weights.at("separationWeight"),
+                              _weights.at("cohesionWeight"));
         boid->move();
         boid->loadMatrixToShader(m_shaderName, m_cam, m_mouseTX);
         boid->drawBoid();

@@ -94,6 +94,32 @@ public slots:
     /// @param _weight a value assigned to the alignment behaviour's weight
     //----------------------------------------------------------------------------------------------------------------------
     void setAlignment(int _weight);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets how much influence the seeking behaviour has on the boid's movement
+    /// @param _weight a value assigned to the seeking behaviour's weight
+    //----------------------------------------------------------------------------------------------------------------------
+    void setSeekWeight(int _weight);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets the maximum movement speed for all the boids in a flock
+    /// @param _maxSpeed the value that will be used as the boids' maximum speed
+    //----------------------------------------------------------------------------------------------------------------------
+    void setMaxSpeed(int _maxSpeed);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets the maximum turning speed for all the boids in a flock
+    /// @param _maxForce the value that will be used as the boids' maximum turning speed
+    //----------------------------------------------------------------------------------------------------------------------
+    void setMaxForce(int _maxForce);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets the radius around each boids within which it become aware other boids
+    /// @param _maxForce the value that will be used as the boids' area of awareness
+    //----------------------------------------------------------------------------------------------------------------------
+    void setAwareness(int _awarenessRadius);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Creates a target that the boids will seek
+    /// @param _active a boolean flag which determines whether the target geometry will
+    /// be drawn and wheather the boids' seeking behaviour is active
+    //----------------------------------------------------------------------------------------------------------------------
+    void activateTarget(bool _active);
 
 
 private:
@@ -152,14 +178,17 @@ private:
 
     std::unique_ptr<ngl::BBox> m_container;
 
+    std::map<std::string, float> m_weightMap ={ {"seekWeight", 0.0f},
+                                                {"alignmentWeight", 0.0f},
+                                                {"separationWeight", 0.0f},
+                                                {"cohesionWeight", 0.0f} };
+
+    std::map<std::string, float> m_attributes = { {"maxSpeed", 0.0f},
+                                                  {"maxForce", 0.0f},
+                                                  {"awarenessRadius", 0.0f} };
     int m_numOfAddBoids;
     int m_numOfRemoveBoids;
-    float m_alignmentWeight;
-    float m_separationWeight;
-    float m_cohesionWeight;
-
+    bool m_targetActive;
 };
-
-
 
 #endif
