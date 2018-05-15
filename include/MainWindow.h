@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtWidgets/QMainWindow>
 #include "NGLScene.h"
+
+#include <QtWidgets/QMainWindow>
 
 namespace Ui
 {

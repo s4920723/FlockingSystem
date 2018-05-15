@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+
 #include <ngl/Vec3.h>
 #include <ngl/Mat4.h>
 #include <ngl/Camera.h>
@@ -33,6 +34,24 @@ class Boid{
     /// @brief returns the current velocity of the boid
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Vec3 getVel();
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief sets the maximum movement speed of the boid
+    /// @param _maxSpeed the value that will be set as the boid's
+    /// maximum movement speed
+    //----------------------------------------------------------------------------------------------------------------------
+    void setMaxSpeed(float _maxSpeed);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief sets the maximum turning speed of the boid
+    /// @param _maxForce the value that will be set as the boid's
+    /// maximum turning speed
+    //----------------------------------------------------------------------------------------------------------------------
+    void setMaxForce(float _maxForce);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief sets the area of awareness of the boid
+    /// @param _awarenessRadius the radius around the boid within which
+    /// it perceives other boids
+    //----------------------------------------------------------------------------------------------------------------------
+    void setAwareness(float _awarenessRadius);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief returns the current velocity of the boid
     //----------------------------------------------------------------------------------------------------------------------
@@ -69,7 +88,7 @@ class Boid{
     /// but has a timer which decided how often the method is called
     /// @param _randomPos the target position of the boid
     //----------------------------------------------------------------------------------------------------------------------
-    void wander(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius, ngl::Vec3 _randomPos);
+    void wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _randomPos);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Aligns the velocity of the current boid with those
     /// of neighbouring boids
@@ -78,7 +97,7 @@ class Boid{
     /// @param _awareRadius the radius around the boid within which it
     /// becomes aware of other boids
     //----------------------------------------------------------------------------------------------------------------------
-    void alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius);
+    void alignment(std::vector<std::unique_ptr<Boid>>& _boidArray);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Redirects the velocity of the current boid in order to
     /// avoid neighbouring boids
@@ -87,7 +106,7 @@ class Boid{
     /// @param _awareRadius the radius around the boid within which it
     /// becomes aware of other boids
     //----------------------------------------------------------------------------------------------------------------------
-    void separation(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius);
+    void separation(std::vector<std::unique_ptr<Boid>>& _boidArray);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Redirects the velocity of the current boid in order to
     /// get closer to neighbouring boids
@@ -96,7 +115,7 @@ class Boid{
     /// @param _awareRadius the radius around the boid within which it
     /// becomes aware of other boids
     //----------------------------------------------------------------------------------------------------------------------
-    void cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius);
+    void cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Sets how much influence each behaviour has over the boid
     /// @param _seekWeight A multiplier for the seeking behaviour vector
@@ -117,10 +136,13 @@ class Boid{
     /// @brief Boid acceleration
     ngl::Vec3 m_acceleration;
     /// @brief The maximum velocity of a vector
-    float m_maxSpeed = 0.005f;
+    float m_maxSpeed;
     /// @brief Modifier that regulates the amount of force
     /// a behvaiour is exhibiting on the boid
-    float m_maxForce = 0.0001f;
+    float m_maxForce;
+    /// @brief The radius within which the boid recognizes
+    /// other boids
+    float m_awarenessRadius;
     /// @brief The current transformation of the boid
     ngl::Transformation m_currentTransform;
     /// @brief Timer for the change in the wandering behaviour

@@ -1,5 +1,6 @@
 #ifndef NGLSCENE_H_
 #define NGLSCENE_H_
+
 #include <ngl/Vec3.h>
 #include <ngl/Mat4.h>
 #include <ngl/Camera.h>
@@ -178,14 +179,9 @@ private:
 
     std::unique_ptr<ngl::BBox> m_container;
 
-    std::map<std::string, float> m_weightMap ={ {"seekWeight", 0.0f},
-                                                {"alignmentWeight", 0.0f},
-                                                {"separationWeight", 0.0f},
-                                                {"cohesionWeight", 0.0f} };
+    std::map<std::string, float> m_weightMap;
 
-    std::map<std::string, float> m_attributes = { {"maxSpeed", 0.0f},
-                                                  {"maxForce", 0.0f},
-                                                  {"awarenessRadius", 0.0f} };
+    std::map<std::string, float> m_attributes;
     int m_numOfAddBoids;
     int m_numOfRemoveBoids;
     bool m_targetActive;

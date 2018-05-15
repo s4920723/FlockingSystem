@@ -5,13 +5,14 @@
 
 #include <vector>
 #include <string>
+#include <map>
+
 #include <ngl/Vec3.h>
 #include <ngl/Mat3.h>
 #include <ngl/Mat4.h>
 #include <ngl/Camera.h>
 #include <ngl/ShaderLib.h>
 #include <ngl/BBox.h>
-#include <map>
 
 
 class Flock{
@@ -48,7 +49,7 @@ class Flock{
     /// @brief draws the flock
     /// @param _boidTransform the updat
     //----------------------------------------------------------------------------------------------------------------------
-    void drawFlock(float _awarenessRadius, std::map<std::string, float> _weights, ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container);
+    void drawFlock(std::map<std::string, float> _attributes, std::map<std::string, float> _weights, ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Returns the size of the flock array
     //----------------------------------------------------------------------------------------------------------------------

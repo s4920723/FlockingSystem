@@ -1,22 +1,32 @@
 #include <QMouseEvent>
 #include <QGuiApplication>
 
+
 #include "NGLScene.h"
 #include <ngl/NGLInit.h>
 #include <iostream>
+#include <initializer_list>
 #include <ngl/Camera.h>
 #include <ngl/Light.h>
 #include <ngl/ShaderLib.h>
 #include <ngl/Material.h>
-#include <initializer_list>
 #include <ngl/VAOPrimitives.h>
 
 NGLScene::NGLScene( QWidget *_parent ) : QOpenGLWidget( _parent )
 {
-    // set this widget to have the initial keyboard focus
     setFocus();
-    // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
     this->resize(_parent->size());
+    m_numOfAddBoids = 0;
+    m_numOfRemoveBoids = 0;
+    m_targetActive = false;
+    m_weightMap ={ {"seekWeight", 0.0f},
+                   {"alignmentWeight", 0.0f},
+                   {"separationWeight", 0.0f},
+                   {"cohesionWeight", 0.0f} };
+
+   m_attributes = { {"maxSpeed", 0.0f},
+                    {"maxForce", 0.0f},
+                    {"awarenessRadius", 0.0f} };
 }
 
 
@@ -140,14 +150,15 @@ void NGLScene::paintGL()
    // assign
    m_testFlock->m_mouseTX = m_mouseGlobalTX;
    //TARGET
-   _targetTransform.setScale(0.03f, 0.03f, 0.03f);
-   loadMatrixToShader();
-   ngl::VAOPrimitives::instance()->draw("football");
+   if (m_targetActive)
+   {
+       _targetTransform.setScale(0.03f, 0.03f, 0.03f);
+       loadMatrixToShader();
+       ngl::VAOPrimitives::instance()->draw("football");
+   }
+   //TEST FLOCK
 
-  //TEST FLOCK
-
-  m_testFlock->drawFlock(0.3f, m_weightMap, _targetTransform.getPosition(), m_container);
-
+  m_testFlock->drawFlock(m_attributes, m_weightMap, _targetTransform.getPosition(), m_container);
   _targetTransform.reset();
   loadMatrixToShader();
   m_container->draw();
@@ -188,14 +199,8 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   case Qt::Key_Down : _targetTransform.addPosition(0.0f, 0.0f, 0.01f); break;
   case Qt::Key_Right : _targetTransform.addPosition(0.01f, 0.0f, 0.0f); break;
   case Qt::Key_Left : _targetTransform.addPosition(-0.01f, 0.0f, 0.0f); break;
-  //Test Flock controls
-  case Qt::Key_Plus : m_testFlock->addBoid(1, m_container); break;
-  case Qt::Key_Minus : m_testFlock->removeBoid(1); break;
-  default : break;
   }
-  // finally update the GLWindow and re-draw
-
-    update();
+  update();
 }
 
 QString NGLScene::getFlockSize()
@@ -208,7 +213,6 @@ QString NGLScene::getFlockSize()
 void NGLScene::setAddBoids(int _numOfBoids)
 {
     m_numOfAddBoids = _numOfBoids;
-    std::cout << m_numOfAddBoids << " BOIDS ARE PREPARED TO BE ADDED \n";
 }
 
 void NGLScene::setRemoveBoids(int _numOfBoids)

@@ -1,7 +1,8 @@
 #include "Boid.h"
 
-#include <iostream>
 #include <ngl/VAOPrimitives.h>
+
+#include <iostream>
 #include <math.h>
 
 
@@ -29,6 +30,21 @@ ngl::Vec3 Boid::getPos()
 ngl::Vec3 Boid::getVel()
 {
   return m_velocity;
+}
+
+void Boid::setMaxSpeed(float _maxSpeed)
+{
+    m_maxSpeed = _maxSpeed;
+}
+
+void Boid::setMaxForce(float _maxForce)
+{
+    m_maxForce = _maxForce;
+}
+
+void Boid::setAwareness(float _awarenessRadius)
+{
+    m_awarenessRadius = _awarenessRadius;
 }
 
 ngl::Transformation Boid::getTransform()
@@ -134,7 +150,7 @@ void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
     m_acceleration = desired;
 }
 
-void Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius, ngl::Vec3 _randomPos)
+void Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _randomPos)
 {
     m_wanderCounter++;
     if (m_wanderCounter >= 200)
@@ -147,7 +163,7 @@ void Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRa
     {
         ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
         float distance = distanceVec.length();
-        if (this->m_id != otherBoid->m_id && distance < _awareRadius)
+        if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
         {
             m_wanderForce *= 0;
             break;
@@ -161,7 +177,7 @@ void Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRa
 
 }
 
-void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius)
+void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     ngl::Vec3 velocitySum;
     int neighbourCount = 0;
@@ -170,7 +186,7 @@ void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awar
     {
         ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
         float distance = distanceVec.length();
-        if (this->m_id != otherBoid->m_id && distance < _awareRadius)
+        if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
         {
             velocitySum += otherBoid->getPos();
             neighbourCount++;
@@ -187,7 +203,7 @@ void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awar
     }
 }
 
-void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius)
+void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     ngl::Vec3 positionSum;
     int neighbourCount = 0;
@@ -196,7 +212,7 @@ void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awa
     {
         ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
         float distance = distanceVec.length();
-        if (this->m_id != otherBoid->m_id && distance < _awareRadius)
+        if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
         {
             positionSum += otherBoid->getPos();
             neighbourCount++;
@@ -214,7 +230,7 @@ void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awa
 }
 
 
-void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray, float _awareRadius)
+void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     ngl::Vec3 positionSum;
     int neighbourCount = 0;
@@ -223,7 +239,7 @@ void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray, float _aware
     {
         ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
         float distance = distanceVec.length();
-        if (this->m_id != otherBoid->m_id && distance < _awareRadius)
+        if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
         {
             positionSum += otherBoid->getPos();
             neighbourCount++;

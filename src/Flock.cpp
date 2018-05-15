@@ -52,21 +52,29 @@ int Flock::getFlockSize()
 }
 
 
-void Flock::drawFlock(float _awarenessRadius, std::map<std::string, float> _weights,
+void Flock::drawFlock(std::map<std::string, float> _attributes, std::map<std::string, float> _weights,
                       ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container)
 {
     for (std::unique_ptr<Boid>& boid : m_boidArray)
     {
+        //Apply attributes to the boid
+        boid->setMaxSpeed(_attributes.at("maxSpeed"));
+        boid->setMaxForce(_attributes.at("maxForce"));
+        boid->setAwareness(_attributes.at("awarenessRadius"));
+
+        //Calculate boids behaviours
         boid->seek(_targetPos);
-        boid->wander(m_boidArray, _awarenessRadius, ngl::Random::instance()->getRandomVec3());
-        boid->alignment(m_boidArray, _awarenessRadius);
-        boid->cohesion(m_boidArray, _awarenessRadius);
-        boid->separation(m_boidArray, _awarenessRadius);
-        boid->containment(_container);
+        boid->wander(m_boidArray, ngl::Random::instance()->getRandomVec3());
+        boid->alignment(m_boidArray);
+        boid->cohesion(m_boidArray);
+        boid->separation(m_boidArray);
+        //boid->containment(_container);
         boid->weighBehaviours(_weights.at("seekWeight"),
                               _weights.at("alignmentWeight"),
                               _weights.at("separationWeight"),
                               _weights.at("cohesionWeight"));
+
+        //Update and draw boid
         boid->move();
         boid->loadMatrixToShader(m_shaderName, m_cam, m_mouseTX);
         boid->drawBoid();
