@@ -49,11 +49,15 @@ class Flock{
     /// @brief draws the flock
     /// @param _boidTransform the updat
     //----------------------------------------------------------------------------------------------------------------------
-    void drawFlock(std::map<std::string, float> _attributes, std::map<std::string, float> _weights, ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container);
+    void drawFlock(bool _activeTarget, std::map<std::string, float> _attributes, std::map<std::string, float> _weights, ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Returns the size of the flock array
     //----------------------------------------------------------------------------------------------------------------------
     int getFlockSize();
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Returns the size of the flock array
+    //----------------------------------------------------------------------------------------------------------------------
+    void setAttributes(std::map<std::string, float> _attributes);
     /// @brief the mouse control transformation used for M uniform
     ngl::Mat4 m_mouseTX;
 

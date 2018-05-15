@@ -24,9 +24,9 @@ NGLScene::NGLScene( QWidget *_parent ) : QOpenGLWidget( _parent )
                    {"separationWeight", 0.0f},
                    {"cohesionWeight", 0.0f} };
 
-   m_attributes = { {"maxSpeed", 0.0f},
-                    {"maxForce", 0.0f},
-                    {"awarenessRadius", 0.0f} };
+   m_attributes = { {"maxSpeed", 0.001f},
+                    {"maxForce", 0.001f},
+                    {"awarenessRadius", 0.01f} };
 }
 
 
@@ -55,11 +55,16 @@ void NGLScene::initializeGL()
   glEnable(GL_DEPTH_TEST);
   // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
-  initializeCamera({1, 1, 1}, {0, 0, 0}, {0, 1, 0});
+  initializeCamera({50, 50, 50}, {0, 0, 0}, {0, 1, 0});
   initializeShader();
   createLights();
-  m_container.reset(new ngl::BBox(-0.5, 0.5, -0.5, 0.5, -0.5, 0.5));
+  m_container.reset(new ngl::BBox(-25.0, 25.0, -25.0, 25.0, -25.0, 25.0));
   m_testFlock.reset(new Flock(m_cam, "BoidShader", m_mouseGlobalTX));
+
+  ngl::VAOPrimitives *prim = ngl::VAOPrimitives::instance();
+  prim->createLineGrid("groundPlane", 100, 100, 50);
+
+  m_targetTransform.setPosition(0.0, 25.0, 0.0);
 }
 
 void NGLScene::initializeShader()
@@ -91,11 +96,11 @@ void NGLScene::initializeShader()
 
 void NGLScene::initializeCamera(ngl::Vec3 _from, ngl::Vec3 _to, ngl::Vec3 _up)
 {
-    m_cam.setShape(45.0f, 720.0f / 576.0f, 0.05f, 350.0f);
+    m_cam.setShape(45.0f, 720.0f / 576.0f, 0.005f, 350.0f);
     m_cam.set(_from, _to, _up);
 }
 
-void NGLScene::loadMatrixToShader()
+void NGLScene::loadMatrixToShader(ngl::Mat4 _modelTransform)
 {
     ngl::ShaderLib *shader=ngl::ShaderLib::instance();
     (*shader)["BoidShader"]->use();
@@ -103,7 +108,8 @@ void NGLScene::loadMatrixToShader()
     ngl::Mat4 MVP;
     ngl::Mat3 normalMatrix;
     ngl::Mat4 M;
-    M= m_mouseGlobalTX * _targetTransform.getMatrix();
+    //_modelTransform.addPosition(0.0, 300.0, 0.0);
+    M= m_mouseGlobalTX * _modelTransform;
     MV=m_cam.getViewMatrix()*M;
     MVP=m_cam.getProjectionMatrix() *MV;
     normalMatrix=MV;
@@ -149,19 +155,27 @@ void NGLScene::paintGL()
    m_mouseGlobalTX.m_m[ 3 ][ 2 ] = m_modelPos.m_z;
    // assign
    m_testFlock->m_mouseTX = m_mouseGlobalTX;
+
+   //Environment objects
+   m_envTransform.reset();
+   loadMatrixToShader(m_envTransform.getMatrix());
+   ngl::VAOPrimitives::instance()->draw("groundPlane");
+   m_envTransform.addPosition(0.0, 25.0, 0.0);
+   loadMatrixToShader(m_envTransform.getMatrix());
+   m_container->draw();
+
    //TARGET
    if (m_targetActive)
    {
-       _targetTransform.setScale(0.03f, 0.03f, 0.03f);
-       loadMatrixToShader();
+       m_targetTransform.setScale(1.0f, 1.0f, 1.0f);
+       loadMatrixToShader(m_targetTransform.getMatrix());
        ngl::VAOPrimitives::instance()->draw("football");
    }
    //TEST FLOCK
+  m_testFlock->drawFlock(m_targetActive, m_attributes, m_weightMap, m_targetTransform.getPosition(), m_container);
 
-  m_testFlock->drawFlock(m_attributes, m_weightMap, _targetTransform.getPosition(), m_container);
-  _targetTransform.reset();
-  loadMatrixToShader();
-  m_container->draw();
+  emit numBoidsChanged(m_testFlock->getFlockSize());
+
   update();
 }
 
@@ -195,18 +209,12 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
       m_modelPos.set(ngl::Vec3::zero());
   break;
   //Test Target controls
-  case Qt::Key_Up : _targetTransform.addPosition(0.0f, 0.0f, -0.01f); break;
-  case Qt::Key_Down : _targetTransform.addPosition(0.0f, 0.0f, 0.01f); break;
-  case Qt::Key_Right : _targetTransform.addPosition(0.01f, 0.0f, 0.0f); break;
-  case Qt::Key_Left : _targetTransform.addPosition(-0.01f, 0.0f, 0.0f); break;
+  case Qt::Key_Up : m_targetTransform.addPosition(0.0f, 0.0f, -0.01f); break;
+  case Qt::Key_Down : m_targetTransform.addPosition(0.0f, 0.0f, 0.01f); break;
+  case Qt::Key_Right : m_targetTransform.addPosition(0.01f, 0.0f, 0.0f); break;
+  case Qt::Key_Left : m_targetTransform.addPosition(-0.01f, 0.0f, 0.0f); break;
   }
   update();
-}
-
-QString NGLScene::getFlockSize()
-{
-    QString flockSize = QString::number(m_testFlock->getFlockSize());
-    return flockSize;
 }
 
 //-----------SLOTS-----------
@@ -254,12 +262,12 @@ void NGLScene::setAlignment(int _weight)
 
 void NGLScene::setMaxSpeed(int _maxSpeed)
 {
-    m_attributes.at("maxSpeed") =  static_cast<float>(_maxSpeed) * 0.01;
+    m_attributes.at("maxSpeed") =  static_cast<float>(_maxSpeed) * 0.001;
 }
 
 void NGLScene::setMaxForce(int _maxForce)
 {
-    m_attributes.at("maxForce") =  static_cast<float>(_maxForce) * 0.01;
+    m_attributes.at("maxForce") =  static_cast<float>(_maxForce) * 0.0001;
 }
 
 void NGLScene::setAwareness(int _awarenessRadius)

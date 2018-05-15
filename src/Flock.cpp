@@ -24,7 +24,7 @@ void Flock::addBoid(int _numBoids, std::unique_ptr<ngl::BBox> &_container)
         ngl::Vec3 randPos;
         ngl::Vec3 randVel;
         randPos = ngl::Random::instance()->getRandomPoint(_container->maxX(), _container->maxY(), _container->maxZ());
-        randVel = ngl::Random::instance()->getRandomVec3();
+        randVel = ngl::Random::instance()->getRandomPoint(_container->maxX(), _container->maxY(), _container->maxZ());
         m_boidArray.push_back(std::unique_ptr<Boid>(new Boid(m_boidArray.size(), randPos, randVel)));
         std::cout << "CREATING BOID #" << m_boidArray.size() << "\n";
         std::cout << "New boid position: " << randPos.m_x << ", "
@@ -51,8 +51,18 @@ int Flock::getFlockSize()
     return m_boidArray.size();
 }
 
+void Flock::setAttributes(std::map<std::string, float> _attributes)
+{
+  for (std::unique_ptr<Boid>& boid : m_boidArray)
+  {
+    boid->setMaxSpeed(_attributes.at("maxSpeed"));
+    boid->setMaxForce(_attributes.at("maxForce"));
+    boid->setAwareness(_attributes.at("awarenessRadius"));
+  }
+}
 
-void Flock::drawFlock(std::map<std::string, float> _attributes, std::map<std::string, float> _weights,
+
+void Flock::drawFlock(bool _activeTarget, std::map<std::string, float> _attributes, std::map<std::string, float> _weights,
                       ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container)
 {
     for (std::unique_ptr<Boid>& boid : m_boidArray)
@@ -68,8 +78,9 @@ void Flock::drawFlock(std::map<std::string, float> _attributes, std::map<std::st
         boid->alignment(m_boidArray);
         boid->cohesion(m_boidArray);
         boid->separation(m_boidArray);
-        //boid->containment(_container);
-        boid->weighBehaviours(_weights.at("seekWeight"),
+        boid->containment(_container);
+        boid->weighBehaviours(_activeTarget,
+                              _weights.at("seekWeight"),
                               _weights.at("alignmentWeight"),
                               _weights.at("separationWeight"),
                               _weights.at("cohesionWeight"));

@@ -46,7 +46,7 @@ class NGLScene : public QOpenGLWidget
     /// @param[in] _w the width of the resized window
     /// @param[in] _h the height of the resized window
     //----------------------------------------------------------------------------------------------------------------------
-    void resizeGL(int _w , int _h);
+    void resizeGL(int _w , int _h) override;
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief the initialize class is called once when the window is created and we have a valid GL context
     /// use this to setup any default GL stuff
@@ -56,10 +56,6 @@ class NGLScene : public QOpenGLWidget
     /// @brief this is called everytime we want to draw the scene
     //----------------------------------------------------------------------------------------------------------------------
     void paintGL() override;
-    //----------------------------------------------------------------------------------------------------------------------
-    /// @brief Queries the size of the flock and returns a QString with the number of boids
-    //----------------------------------------------------------------------------------------------------------------------
-    QString getFlockSize();
 
 public slots:
     //----------------------------------------------------------------------------------------------------------------------
@@ -161,7 +157,7 @@ private:
     void initializeShader();
     void initializeCamera(ngl::Vec3 _from, ngl::Vec3 _to, ngl::Vec3 _up);
     void createLights();
-    void loadMatrixToShader();
+    void loadMatrixToShader(ngl::Mat4 _modelTransform);
     /// @brief windows parameters for mouse control etc.
     WinParams m_win;
     ///Mouse transforms
@@ -175,7 +171,8 @@ private:
     ///Test Flock
     std::unique_ptr<Flock> m_testFlock;
 
-    ngl::Transformation _targetTransform;
+    ngl::Transformation m_envTransform;
+    ngl::Transformation m_targetTransform;
 
     std::unique_ptr<ngl::BBox> m_container;
 
@@ -185,6 +182,9 @@ private:
     int m_numOfAddBoids;
     int m_numOfRemoveBoids;
     bool m_targetActive;
+
+  signals :
+    void numBoidsChanged(int);
 };
 
 #endif

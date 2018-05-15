@@ -12,9 +12,18 @@ Boid::Boid(int _id, ngl::Vec3 _initPos, ngl::Vec3 _initVel)
     std::cout << "Boid has been created\n";
     m_position.set(_initPos);
     m_velocity.set(_initVel);
+    m_acceleration.set(1.0, 1.0, 1.0);
     m_id = _id;
-    m_currentTransform.setScale(0.1f, 0.1f, 0.1f);
+    m_currentTransform.setScale(3.0f, 3.0f, 3.0f);
     m_wanderCounter = 0;
+    m_maxSpeed = 0.01f;
+    m_maxForce = 0.001f;
+
+    m_alignmentForce.zero();
+    m_cohesionForce.zero();
+    m_containmentForce.zero();
+    m_seekForce.zero();
+    m_separationForce.zero();
 }
 
 Boid::~Boid()
@@ -82,7 +91,6 @@ void Boid::drawBoid()
 void Boid::move()
 {
   //Translation update
-  ngl::Vec3 velocityTemp = m_velocity;
   m_velocity += m_acceleration;
   m_velocity.clamp(-m_maxSpeed, m_maxSpeed);
   m_position += m_velocity;
@@ -92,32 +100,41 @@ void Boid::move()
   //Rotation update
   float yaw = -atan(m_velocity.m_y/sqrt(m_velocity.m_x * m_velocity.m_x + m_velocity.m_z * m_velocity.m_z)) * 57.295779524;
   float pitch = atan2(m_velocity.m_x, m_velocity.m_z) * 57.295779524;
+  std::cout << "Current yaw: " << yaw << "\n";
+  std::cout << "Current pitch: " << pitch << "\n";
   m_currentTransform.setRotation(yaw, pitch, 0);
 }
 
 
-void Boid::seek(ngl::Vec3 _targetPos)
+ngl::Vec3 Boid::steer(ngl::Vec3 _target)
 {
-    ngl::Vec3 desired = _targetPos - m_position;
+  ngl::Vec3 steer;
+  ngl::Vec3 desired = _target - this->getPos();
+  float d = desired.length();
+  if (d > 0)
+  {
     desired.normalize();
-    //arrive(_targetPos);
-    desired *= m_maxSpeed;
-    ngl::Vec3 steer = desired - m_velocity;
-    steer.clamp(-m_maxForce, m_maxForce);
-
-    m_seekForce = steer;
-
-
+    if (d < 3.0f)
+    {
+      desired *= m_maxSpeed*(d/3.0f);
+    }
+    else
+    {
+      desired *= m_maxSpeed;
+    }
+    steer = desired - m_velocity;
+    steer.clamp(m_maxForce);
+  }
+  else
+  {
+    steer.zero();
+  }
+  return steer;
 }
 
-void Boid::arrive(ngl::Vec3 _targetPos)
+void Boid::seek(ngl::Vec3 _targetPos)
 {
-    ngl::Vec3 desired = _targetPos - m_position;
-    if (desired.length() < 0.1f)
-    {
-      m_maxSpeed = 1/desired.length();
-      std::cout << "Arrival speed: " << m_maxSpeed << "\n" ;
-    }
+    m_seekForce = steer(_targetPos);
 }
 
 void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
@@ -147,7 +164,7 @@ void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
 //    desired *= m_maxSpeed;
 //    ngl::Vec3 steer = desired - m_velocity;
 //    steer.clamp(-m_maxForce, m_maxForce);
-    m_acceleration = desired;
+    m_acceleration -= desired;
 }
 
 void Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _randomPos)
@@ -188,18 +205,18 @@ void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray)
         float distance = distanceVec.length();
         if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
         {
-            velocitySum += otherBoid->getPos();
+            velocitySum += otherBoid->getVel();
             neighbourCount++;
         }
     }
     if (neighbourCount > 0)
     {
         velocitySum /= (float)neighbourCount;
-        velocitySum.normalize();
-        velocitySum *= m_maxSpeed;
-        ngl::Vec3 steer = velocitySum - m_velocity;
-        steer.clamp(-m_maxForce, m_maxForce);
-        m_alignmentForce = steer;
+        m_alignmentForce = steer(velocitySum);
+    }
+    else
+    {
+        m_alignmentForce = velocitySum;
     }
 }
 
@@ -214,8 +231,11 @@ void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
         float distance = distanceVec.length();
         if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
         {
-            positionSum += otherBoid->getPos();
-            neighbourCount++;
+          ngl::Vec3 posDiff = this->getPos() - otherBoid->getPos();
+          posDiff.normalize();
+          posDiff /= distance;
+          positionSum += otherBoid->getPos();
+          neighbourCount++;
         }
     }
     if (neighbourCount > 0)
@@ -223,7 +243,7 @@ void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
         positionSum /= (float)neighbourCount;
         positionSum.normalize();
         positionSum *= m_maxSpeed;
-        ngl::Vec3 steer = (positionSum*(-1)) - m_velocity;
+        ngl::Vec3 steer = positionSum - m_velocity;
         steer.clamp(-m_maxForce, m_maxForce);
         m_separationForce = steer;
     }
@@ -239,7 +259,7 @@ void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
     {
         ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
         float distance = distanceVec.length();
-        if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
+        if (distance < 0  && distance < m_awarenessRadius)
         {
             positionSum += otherBoid->getPos();
             neighbourCount++;
@@ -247,24 +267,29 @@ void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
     }
     if (neighbourCount > 0)
     {
-        positionSum /= (float)neighbourCount;
-        positionSum.normalize();
-        positionSum *= m_maxSpeed;
-        ngl::Vec3 steer = positionSum - m_position;
-        steer.clamp(-m_maxForce, m_maxForce);
-        m_cohesionForce = steer;
+        positionSum /= static_cast<float>(neighbourCount);
+        m_cohesionForce = steer(positionSum);
+    }
+    else
+    {
+       m_cohesionForce = positionSum;
     }
 }
 
-void Boid::weighBehaviours(float _seekWeight, float _alignmentWeight, float _separationWeight, float _cohesionWeight)
+void Boid::weighBehaviours(bool _activeTarget, float _seekWeight, float _alignmentWeight, float _separationWeight, float _cohesionWeight)
 {
+  if (_activeTarget)
+  {
     m_seekForce *= _seekWeight;
     m_acceleration += m_seekForce;
-    //std::cout << "Seeking force: " << m_seekForce.m_x << ", " << m_seekForce.m_y << ", " << m_seekForce.m_z << "\n";
-
-    m_wanderForce *= _seekWeight;
+    std::cout << "Seeking force: " << m_seekForce.m_x << ", " << m_seekForce.m_y << ", " << m_seekForce.m_z << "\n";
+  }
+  else
+  {
+    m_wanderForce *= 0;
     m_acceleration += m_wanderForce;
     //std::cout << "Wandering force: " << m_wanderForce.m_x << ", " << m_wanderForce.m_y << ", " << m_wanderForce.m_z << "\n";
+  }
 
     m_alignmentForce *= _alignmentWeight;
     m_acceleration += m_alignmentForce;
