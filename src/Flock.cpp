@@ -78,7 +78,7 @@ void Flock::drawFlock(bool _activeTarget, std::map<std::string, float> _attribut
         boid->alignment(m_boidArray);
         boid->cohesion(m_boidArray);
         boid->separation(m_boidArray);
-        boid->containment(_container);
+        //boid->containment(_container);
         boid->weighBehaviours(_activeTarget,
                               _weights.at("seekWeight"),
                               _weights.at("alignmentWeight"),

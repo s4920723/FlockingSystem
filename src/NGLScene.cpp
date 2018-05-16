@@ -64,7 +64,6 @@ void NGLScene::initializeGL()
   ngl::VAOPrimitives *prim = ngl::VAOPrimitives::instance();
   prim->createLineGrid("groundPlane", 100, 100, 50);
 
-  m_targetTransform.setPosition(0.0, 25.0, 0.0);
 }
 
 void NGLScene::initializeShader()
@@ -172,6 +171,7 @@ void NGLScene::paintGL()
        ngl::VAOPrimitives::instance()->draw("football");
    }
    //TEST FLOCK
+  m_targetTransform.getMatrix();
   m_testFlock->drawFlock(m_targetActive, m_attributes, m_weightMap, m_targetTransform.getPosition(), m_container);
 
   emit numBoidsChanged(m_testFlock->getFlockSize());
@@ -192,8 +192,6 @@ void NGLScene::paintGL()
   updateScene();
   update();
 }*/
-
-//----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::keyPressEvent(QKeyEvent *_event)
 {
