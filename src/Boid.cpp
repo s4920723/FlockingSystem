@@ -179,7 +179,7 @@ void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
     desired *= m_maxSpeed;
     ngl::Vec3 steer = desired - m_velocity;
     steer.clamp(-m_maxForce, m_maxForce);
-    m_acceleration = desired;
+    m_containmentForce = desired;
 }
 
 void Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _randomPos)
@@ -238,9 +238,9 @@ void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray)
 void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     float desiredSeparation = m_awarenessRadius/2;
-    ngl::Vec3 positionSum;
+    ngl::Vec3 differenceSum;
     int neighbourCount = 0;
-    positionSum.zero();
+    differenceSum.zero();
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
     {
         ngl::Vec3 difference =this->getPos() - otherBoid->getPos();
@@ -249,16 +249,16 @@ void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
         {
             difference.normalize();
             difference/=distance;
-            positionSum += difference;
+            differenceSum += difference;
             neighbourCount++;
         }
     }
     if (neighbourCount > 0)
     {
-        positionSum /= (float)neighbourCount;
-        positionSum.normalize();
-        positionSum *= m_maxSpeed;
-        ngl::Vec3 steer = positionSum - m_velocity;
+        differenceSum /= (float)neighbourCount;
+        differenceSum.normalize();
+        differenceSum *= m_maxSpeed;
+        ngl::Vec3 steer = differenceSum - m_velocity;
         steer.clamp(-m_maxForce, m_maxForce);
         m_separationForce = steer;
     }
@@ -268,12 +268,12 @@ void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
 void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     ngl::Vec3 positionSum;
-    int neighbourCount = 0;
     positionSum.zero();
+    int neighbourCount = 0;
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
     {
-        ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
-        float distance = distanceVec.length();
+        ngl::Vec3 difference = this->getPos() - otherBoid->getPos();
+        float distance = difference.length();
         if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
         {
             positionSum += otherBoid->getPos();
@@ -311,11 +311,11 @@ void Boid::weighBehaviours(bool _activeTarget, float _seekWeight, float _alignme
     m_acceleration += m_alignmentForce;
     //std::cout << "Alignment force: " << m_alignmentForce.m_x << ", " << m_alignmentForce.m_y << ", " << m_alignmentForce.m_z << "\n";
 
-    m_separationForce *= _separationWeight;
+    m_separationForce *= _separationWeight *0;
     m_acceleration += m_separationForce;
     //std::cout << "Seeking force: " << m_separationForce.m_x << ", " << m_separationForce.m_y << ", " << m_separationForce.m_z <<  "\n";
 
-    m_cohesionForce *= _cohesionWeight *0;
+    m_cohesionForce *= _cohesionWeight;
     m_acceleration += m_cohesionForce;
     //std::cout << "Cohesion force: " << m_cohesionForce.m_x << ", " << m_cohesionForce.m_y << ", " << m_cohesionForce.m_z << "\n";
 }
