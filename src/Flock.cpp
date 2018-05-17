@@ -25,8 +25,11 @@ void Flock::addBoid(int _numBoids, std::unique_ptr<ngl::BBox> &_container)
     {
         ngl::Vec3 randPos;
         ngl::Vec3 randVel;
-        randPos = ngl::Random::instance()->getRandomPoint(_container->width()/2, _container->height(), _container->depth()/2);
-        if (randPos.m_y < 0) randPos.m_y *= -1;
+        randPos = ngl::Random::instance()->getRandomPoint(_container->width()/2 - 5, _container->height()- 5, _container->depth()/2 - 5);
+        if (randPos.m_y < 0)
+            randPos.m_y *= -1.0f;
+        if (randPos.m_y == 0.0f)
+            randPos.m_y += 5.0f;
         randVel = ngl::Random::instance()->getRandomPoint(_container->width()/2, _container->height()/2, _container->depth()/2);
         m_boidArray.push_back(std::unique_ptr<Boid>(new Boid(m_boidArray.size(), randPos, randVel)));
 
@@ -78,11 +81,11 @@ void Flock::drawFlock(bool _activeTarget, std::map<std::string, float> _attribut
         }
         else
         {
-          forceSum += boid->wander(m_boidArray, ngl::Random::instance()->getRandomVec3()) * _weights.at("seekWeight");
+          forceSum += boid->wander(m_boidArray);
         }
-        forceSum += boid->alignment(m_boidArray) * _weights.at("alignmentWeight");
-        forceSum += boid->cohesion(m_boidArray) * _weights.at("cohesionWeight");
-        forceSum += boid->separation(m_boidArray) * _weights.at("separationWeight");
+        forceSum += boid->alignment(m_boidArray) * _weights.at("alignmentWeight") * 2.0f;
+        forceSum += boid->cohesion(m_boidArray) * _weights.at("cohesionWeight") * 1.0f;
+        forceSum += boid->separation(m_boidArray) * _weights.at("separationWeight") * 3.0f;
 
         //Update and draw boid
         boid->move(forceSum, _container);

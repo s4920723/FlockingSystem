@@ -89,7 +89,7 @@ class Boid{
     /// but has a timer which decided how often the method is called
     /// @param _randomPos the target position of the boid
     //----------------------------------------------------------------------------------------------------------------------
-    ngl::Vec3 wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _randomPos);
+    ngl::Vec3 wander(std::vector<std::unique_ptr<Boid>>& _boidArray);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Aligns the velocity of the current boid with those
     /// of neighbouring boids

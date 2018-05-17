@@ -286,10 +286,10 @@
        <item row="4" column="0">
         <widget class="QSlider" name="maxSpeedSlider">
          <property name="minimum">
-          <number>1</number>
+          <number>10</number>
          </property>
          <property name="maximum">
-          <number>300</number>
+          <number>200</number>
          </property>
          <property name="singleStep">
           <number>10</number>
@@ -302,10 +302,10 @@
        <item row="6" column="0">
         <widget class="QSlider" name="maxForceSlider">
          <property name="minimum">
-          <number>1</number>
+          <number>10</number>
          </property>
          <property name="maximum">
-          <number>300</number>
+          <number>100</number>
          </property>
          <property name="singleStep">
           <number>10</number>
@@ -325,7 +325,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="maxForceLabel">
          <property name="text">
-          <string>Maximum Turning Speed</string>
+          <string>Maximum Applied Force</string>
          </property>
         </widget>
        </item>

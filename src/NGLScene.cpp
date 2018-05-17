@@ -55,10 +55,10 @@ void NGLScene::initializeGL()
   glEnable(GL_DEPTH_TEST);
   // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
-  initializeCamera({50, 50, 50}, {0, 0, 0}, {0, 1, 0});
+  initializeCamera({110, 110, 110}, {0, 0, 0}, {0, 1, 0});
   initializeShader();
   createLights();
-  m_container.reset(new ngl::BBox(ngl::Vec3(0.0, 25.0, 0.0), 50, 50, 50));
+  m_container.reset(new ngl::BBox(ngl::Vec3(0.0, 50.0, 0.0), 100, 100, 100));
   m_testFlock.reset(new Flock(m_cam, "BoidShader", m_mouseGlobalTX));
 
   ngl::VAOPrimitives *prim = ngl::VAOPrimitives::instance();
@@ -235,17 +235,20 @@ void NGLScene::setAlignment(int _weight)
 
 void NGLScene::setMaxSpeed(int _maxSpeed)
 {
-    m_attributes.at("maxSpeed") =  static_cast<float>(_maxSpeed) * 0.001;
+    m_attributes.at("maxSpeed") =  static_cast<float>(_maxSpeed) * 0.01;
+    std::cout << "MAX SPEED SET TO: " <<  m_attributes.at("maxSpeed") << "\n";
 }
 
 void NGLScene::setMaxForce(int _maxForce)
 {
     m_attributes.at("maxForce") =  static_cast<float>(_maxForce) * 0.0001;
+    std::cout << "MAX FORCE SET TO: " <<  m_attributes.at("maxForce") << "\n";
 }
 
 void NGLScene::setAwareness(int _awarenessRadius)
 {
-    m_attributes.at("awarenessRadius") =  static_cast<float>(_awarenessRadius) * 0.01;
+    m_attributes.at("awarenessRadius") =  static_cast<float>(_awarenessRadius) * 0.1;
+    std::cout << "MAX FORCE SET TO: " <<  m_attributes.at("awarenessRadius") << "\n";
 }
 
 void NGLScene::activateTarget(bool _active)

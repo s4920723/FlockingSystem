@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <ngl/Random.h>
 
 
 
@@ -14,8 +15,8 @@ Boid::Boid(int _id, ngl::Vec3 _initPos, ngl::Vec3 _initVel)
     m_id = _id;
     m_currentTransform.setScale(0.75, 0.75, 0.75);
     m_wanderCounter = 0;
-    m_maxSpeed = 0.01f;
-    m_maxForce = 0.001f;
+    m_maxSpeed = 0.15f;
+    m_maxForce = 0.015f;
     std::cout << "CREATING BOID #" << m_id << "\n";
     std::cout << "New boid position: " << m_position.m_x << ", "
               << m_position.m_y << ", " << m_position.m_z << "\n";
@@ -171,14 +172,14 @@ void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
   }
 }
 
-ngl::Vec3 Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _randomPos)
+ngl::Vec3 Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     m_wanderCounter++;
-    if (m_wanderCounter >= 200)
+    if (m_wanderCounter >= 150)
     {
        m_wanderCounter = 0;
-       return seek(_randomPos);
-
+       ngl::Vec3 randPos = ngl::Random::instance()->getRandomPoint(300.0, 300.0, 300.0);
+       return seek(randPos);
     }
 
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
@@ -249,6 +250,10 @@ ngl::Vec3 Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
         steer.clamp(-m_maxForce, m_maxForce);
         return steer;
     }
+    else
+    {
+      return ngl::Vec3(0.0,0.0,0.0);
+    }
 }
 
 
@@ -271,5 +276,9 @@ ngl::Vec3 Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
     {
         positionSum /= static_cast<float>(neighbourCount);
         return seek(positionSum);
+    }
+    else
+    {
+      return ngl::Vec3(0.0,0.0,0.0);
     }
 }
