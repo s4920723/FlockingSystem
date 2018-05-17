@@ -12,6 +12,7 @@
 #include <ngl/ShaderLib.h>
 #include <ngl/BBox.h>
 #include <ngl/SimpleVAO.h>
+#include <ngl/Obj.h>
 
 
 class Boid{
@@ -59,18 +60,18 @@ class Boid{
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief updates the position and velocity of the boid using m_acceleration
     //----------------------------------------------------------------------------------------------------------------------
-    void move();
+    void move(ngl::Vec3 _force, std::unique_ptr<ngl::BBox> &_container);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief calculates the seeking behaviour of the boid
     /// @param _targetPos is the goal position of the boid
     //----------------------------------------------------------------------------------------------------------------------
-    void seek(ngl::Vec3 _targetPos);
+    ngl::Vec3 seek(ngl::Vec3 _targetPos);
     ///ADD THIS BEHAVIOUR INTO SEEK
     void arrive(ngl::Vec3 _tagetPos);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief draws the boid geometry with the updated location
     //----------------------------------------------------------------------------------------------------------------------
-    void drawBoid();
+    void drawBoid(std::unique_ptr<ngl::Obj> &_geo);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief method that sets the uniforms for the M, MV, MVP and normal matricies
     /// @param _container a bounding box to restrict the boid
@@ -88,7 +89,7 @@ class Boid{
     /// but has a timer which decided how often the method is called
     /// @param _randomPos the target position of the boid
     //----------------------------------------------------------------------------------------------------------------------
-    void wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _randomPos);
+    ngl::Vec3 wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _randomPos);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Aligns the velocity of the current boid with those
     /// of neighbouring boids
@@ -97,7 +98,7 @@ class Boid{
     /// @param _awareRadius the radius around the boid within which it
     /// becomes aware of other boids
     //----------------------------------------------------------------------------------------------------------------------
-    void alignment(std::vector<std::unique_ptr<Boid>>& _boidArray);
+    ngl::Vec3 alignment(std::vector<std::unique_ptr<Boid>>& _boidArray);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Redirects the velocity of the current boid in order to
     /// avoid neighbouring boids
@@ -106,7 +107,7 @@ class Boid{
     /// @param _awareRadius the radius around the boid within which it
     /// becomes aware of other boids
     //----------------------------------------------------------------------------------------------------------------------
-    void separation(std::vector<std::unique_ptr<Boid>>& _boidArray);
+    ngl::Vec3 separation(std::vector<std::unique_ptr<Boid>>& _boidArray);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Redirects the velocity of the current boid in order to
     /// get closer to neighbouring boids
@@ -115,16 +116,7 @@ class Boid{
     /// @param _awareRadius the radius around the boid within which it
     /// becomes aware of other boids
     //----------------------------------------------------------------------------------------------------------------------
-    void cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray);
-    //----------------------------------------------------------------------------------------------------------------------
-    /// @brief Sets how much influence each behaviour has over the boid
-    /// @param _seekWeight A multiplier for the seeking behaviour vector
-    /// @param _wanderWeight A multiplier for the wandering behaviour vector
-    /// @param _alignmentWeight A multiplier for the alignment behaviour vector
-    /// @param _separationWeight A multiplier for the separation behaviour vector
-    /// @param _alignmentWeight A multiplier for the cohesion behaviour vector
-    //----------------------------------------------------------------------------------------------------------------------
-    void weighBehaviours(bool _activeTarget, float _seekWeight, float _alignmentWeight, float _separationWeight, float _cohesionWeight);
+    ngl::Vec3 cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray);
 
     ngl::Vec3 steer(ngl::Vec3 _target);
     /// @brief Boid id number
@@ -151,18 +143,6 @@ class Boid{
     int m_wanderCounter;
     /// @brief A VAO used to visualize the velocity vector
     std::unique_ptr<ngl::SimpleVAO> m_velocityLineVAO;
-    /// @brief the final calculated vector for the seeking behaviour
-    ngl::Vec3 m_seekForce;
-    /// @brief the final calculated vector for the wandering behaviour
-    ngl::Vec3 m_wanderForce;
-    /// @brief the final calculated vector for the containment behaviour
-    ngl::Vec3 m_containmentForce;
-    /// @brief the final calculated vector for the alignment behaviour
-    ngl::Vec3 m_alignmentForce;
-    /// @brief the final calculated vector for the separation behaviour
-    ngl::Vec3 m_separationForce;
-    /// @brief the final calculated vector for the cohesion behaviour
-    ngl::Vec3 m_cohesionForce;
 };
 
 #endif

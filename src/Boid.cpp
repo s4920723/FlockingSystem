@@ -9,25 +9,23 @@
 
 Boid::Boid(int _id, ngl::Vec3 _initPos, ngl::Vec3 _initVel)
 {
-    std::cout << "Boid has been created\n";
     m_position.set(_initPos);
     m_velocity.set(_initVel);
     m_id = _id;
-    m_currentTransform.setScale(3.0f, 3.0f, 3.0f);
+    m_currentTransform.setScale(0.75, 0.75, 0.75);
     m_wanderCounter = 0;
     m_maxSpeed = 0.01f;
     m_maxForce = 0.001f;
-
-    //m_alignmentForce.zero();
-    //m_cohesionForce.zero();
-    //m_containmentForce.zero();
-    //m_seekForce.zero();
-    //m_separationForce.zero();
+    std::cout << "CREATING BOID #" << m_id << "\n";
+    std::cout << "New boid position: " << m_position.m_x << ", "
+              << m_position.m_y << ", " << m_position.m_z << "\n";
+    std::cout << "New boid velocity: " << m_velocity.m_x << ", "
+              << m_velocity.m_y << ", " << m_velocity.m_z << "\n";
 }
 
 Boid::~Boid()
 {
-    std::cout << "Boid has been destroyed\n";
+    std::cout << "DELETING BOID #" << m_id << "\n";
 }
 
 ngl::Vec3 Boid::getPos()
@@ -79,23 +77,20 @@ void Boid::loadMatrixToShader(std::string _shaderName, ngl::Camera _cam, ngl::Ma
   shader->setUniform("M",M);
 }
 
-void Boid::drawBoid()
+void Boid::drawBoid(std::unique_ptr<ngl::Obj> &_geo)
 {
-    ngl::VAOPrimitives::instance() ->draw("troll");
-    std::vector<ngl::Vec3> velocityVerts;
-    velocityVerts.push_back(m_position);
-    velocityVerts.push_back(m_velocity);
+    _geo->draw();
 }
 
-void Boid::move()
+void Boid::move(ngl::Vec3 _force, std::unique_ptr<ngl::BBox> &_container)
 {
-  //Translation update
+  m_acceleration = _force;
   m_velocity += m_acceleration;
+  containment(_container);
   m_velocity.clamp(m_maxSpeed);
   m_position += m_velocity;
   m_acceleration *= 0;
   m_currentTransform.setPosition(m_position);
-
   //Rotation update
   float yaw = -atan(m_velocity.m_y/sqrt(m_velocity.m_x * m_velocity.m_x + m_velocity.m_z * m_velocity.m_z)) * 57.295779524;
   float pitch = atan2(m_velocity.m_x, m_velocity.m_z) * 57.295779524;
@@ -129,7 +124,7 @@ ngl::Vec3 Boid::steer(ngl::Vec3 _target)
   return steer;
 }
 
-void Boid::seek(ngl::Vec3 _targetPos)
+ngl::Vec3 Boid::seek(ngl::Vec3 _targetPos)
 {
     ngl::Vec3 desired = _targetPos - m_position;
     desired.normalize();
@@ -138,7 +133,7 @@ void Boid::seek(ngl::Vec3 _targetPos)
     ngl::Vec3 steer = desired - m_velocity;
     steer.clamp(-m_maxForce, m_maxForce);
 
-    m_seekForce = steer;
+    return steer;
 
 
 }
@@ -154,41 +149,36 @@ void Boid::arrive(ngl::Vec3 _targetPos)
 
 void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
 {
-    ngl::Vec3 desired;
-    desired.set(1.0f, 1.0f, 1.0f);
-    if (m_currentTransform.getPosition().m_x > _container->maxX())
-    desired = _container->getNormalArray()->left();
 
-    if (m_currentTransform.getPosition().m_x < _container->minX())
-    desired = _container->getNormalArray()->right();
+  float ext[6];
+  ext[0]=(_container->height());
+  ext[1]=0.0;
+  ext[2]=ext[3]=(_container->width()/2.0f);
+  ext[4]=ext[5]=(_container->depth()/2.0f);
+  float D;
+  for(int i=0; i<6; ++i)
+  {
+    D=_container->getNormalArray()[i].dot(m_position+m_velocity+m_acceleration);
+    D += 2.0f; //ojbectRadius
 
-    if (m_currentTransform.getPosition().m_y > _container->maxY())
-    desired = _container->getNormalArray()->down();
+    if (D>=ext[i])
+    {
+      float x = 2*(m_velocity.dot((_container->getNormalArray()[i])));
+      ngl::Vec3 d = _container->getNormalArray()[i]*x;
+      m_velocity -= d;
 
-    if (m_currentTransform.getPosition().m_y < _container->minY())
-    desired = _container->getNormalArray()->up();
-
-    if (m_currentTransform.getPosition().m_z > _container->maxZ())
-    desired = _container->getNormalArray()->out();
-
-    if (m_currentTransform.getPosition().m_z < _container->minZ())
-    desired = _container->getNormalArray()->in();
-
-    desired -= m_position;
-    desired.normalize();
-    desired *= m_maxSpeed;
-    ngl::Vec3 steer = desired - m_velocity;
-    steer.clamp(-m_maxForce, m_maxForce);
-    m_containmentForce = desired;
+    }
+  }
 }
 
-void Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _randomPos)
+ngl::Vec3 Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _randomPos)
 {
     m_wanderCounter++;
     if (m_wanderCounter >= 200)
     {
-        seek(_randomPos);
-        m_wanderCounter = 0;
+       m_wanderCounter = 0;
+       return seek(_randomPos);
+
     }
 
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
@@ -197,19 +187,12 @@ void Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray, ngl::Vec3 _ran
         float distance = distanceVec.length();
         if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
         {
-            m_wanderForce *= 0;
-            break;
+           return ngl::Vec3(0.0,0.0,0.0);
         }
     }
-
-    if (m_seekForce != ngl::Vec3(0.0f, 0.0f, 0.0f))
-    {
-        m_wanderForce *= 0;
-    }
-
 }
 
-void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray)
+ngl::Vec3 Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     ngl::Vec3 velocitySum;
     int neighbourCount = 0;
@@ -220,22 +203,26 @@ void Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray)
         float distance = distanceVec.length();
         if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
         {
-            velocitySum += otherBoid->getPos();
+            velocitySum += otherBoid->getVel();
             neighbourCount++;
         }
     }
     if (neighbourCount > 0)
     {
-        velocitySum /= (float)neighbourCount;
+        velocitySum /= static_cast<float>(neighbourCount);
         velocitySum.normalize();
         velocitySum *= m_maxSpeed;
         ngl::Vec3 steer = velocitySum - m_velocity;
         steer.clamp(-m_maxForce, m_maxForce);
-        m_alignmentForce = steer;
+        return steer;
+    }
+    else
+    {
+      return ngl::Vec3(0.0,0.0,0.0);
     }
 }
 
-void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
+ngl::Vec3 Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     float desiredSeparation = m_awarenessRadius/2;
     ngl::Vec3 differenceSum;
@@ -260,19 +247,19 @@ void Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
         differenceSum *= m_maxSpeed;
         ngl::Vec3 steer = differenceSum - m_velocity;
         steer.clamp(-m_maxForce, m_maxForce);
-        m_separationForce = steer;
+        return steer;
     }
 }
 
 
-void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
+ngl::Vec3 Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     ngl::Vec3 positionSum;
     positionSum.zero();
     int neighbourCount = 0;
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
     {
-        ngl::Vec3 difference = this->getPos() - otherBoid->getPos();
+        ngl::Vec3 difference = m_position - otherBoid->getPos();
         float distance = difference.length();
         if (this->m_id != otherBoid->m_id && distance < m_awarenessRadius)
         {
@@ -282,40 +269,7 @@ void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
     }
     if (neighbourCount > 0)
     {
-        positionSum /= (float)neighbourCount;
-        std::cout << "Cohesion Position Sum" << positionSum.m_x << ", "<< positionSum.m_y << ", " << positionSum.m_z << "\n";
-        positionSum.normalize();
-        positionSum *= m_maxSpeed;
-        ngl::Vec3 steer = positionSum - m_velocity;
-        steer.clamp(-m_maxForce, m_maxForce);
-        m_cohesionForce = steer;
+        positionSum /= static_cast<float>(neighbourCount);
+        return seek(positionSum);
     }
-}
-
-void Boid::weighBehaviours(bool _activeTarget, float _seekWeight, float _alignmentWeight, float _separationWeight, float _cohesionWeight)
-{
-    if (_activeTarget)
-    {
-        m_seekForce *= _seekWeight *0;
-        m_acceleration += m_seekForce;
-        //std::cout << "Seeking force: " << m_seekForce.m_x << ", " << m_seekForce.m_y << ", " << m_seekForce.m_z << "\n";
-    }
-    else
-    {
-        m_wanderForce *= _seekWeight *0;
-        m_acceleration += m_wanderForce;
-        //std::cout << "Wandering force: " << m_wanderForce.m_x << ", " << m_wanderForce.m_y << ", " << m_wanderForce.m_z << "\n";
-    }
-
-    m_alignmentForce *= _alignmentWeight *0;
-    m_acceleration += m_alignmentForce;
-    //std::cout << "Alignment force: " << m_alignmentForce.m_x << ", " << m_alignmentForce.m_y << ", " << m_alignmentForce.m_z << "\n";
-
-    m_separationForce *= _separationWeight *0;
-    m_acceleration += m_separationForce;
-    //std::cout << "Seeking force: " << m_separationForce.m_x << ", " << m_separationForce.m_y << ", " << m_separationForce.m_z <<  "\n";
-
-    m_cohesionForce *= _cohesionWeight;
-    m_acceleration += m_cohesionForce;
-    //std::cout << "Cohesion force: " << m_cohesionForce.m_x << ", " << m_cohesionForce.m_y << ", " << m_cohesionForce.m_z << "\n";
 }

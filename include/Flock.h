@@ -13,6 +13,7 @@
 #include <ngl/Camera.h>
 #include <ngl/ShaderLib.h>
 #include <ngl/BBox.h>
+#include <ngl/Obj.h>
 
 
 class Flock{
@@ -70,6 +71,8 @@ class Flock{
     std::string m_shaderName;
     /// @brief the bounding box for the flock
     ngl::BBox m_container;
+
+    std::unique_ptr<ngl::Obj> m_boidGeo;
 
 };
 #endif

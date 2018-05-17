@@ -51,18 +51,21 @@ void NGLScene::initializeGL()
   // this everything will crash
   ngl::NGLInit::instance();
   glClearColor(0.5f, 0.5f, 0.5f, 1.0f);			   // Grey Background
-  // enable depth testing for drawing
+  // enable depth testing for drawfing
   glEnable(GL_DEPTH_TEST);
   // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
   initializeCamera({50, 50, 50}, {0, 0, 0}, {0, 1, 0});
   initializeShader();
   createLights();
-  m_container.reset(new ngl::BBox(-25.0, 25.0, -25.0, 25.0, -25.0, 25.0));
+  m_container.reset(new ngl::BBox(ngl::Vec3(0.0, 25.0, 0.0), 50, 50, 50));
   m_testFlock.reset(new Flock(m_cam, "BoidShader", m_mouseGlobalTX));
 
   ngl::VAOPrimitives *prim = ngl::VAOPrimitives::instance();
   prim->createLineGrid("groundPlane", 100, 100, 50);
+
+  m_updateTimer=startTimer(40);
+  startTimer(10);
 
 }
 
@@ -159,61 +162,33 @@ void NGLScene::paintGL()
    m_envTransform.reset();
    loadMatrixToShader(m_envTransform.getMatrix());
    ngl::VAOPrimitives::instance()->draw("groundPlane");
-   m_envTransform.addPosition(0.0, 25.0, 0.0);
    loadMatrixToShader(m_envTransform.getMatrix());
    m_container->draw();
 
    //TARGET
    if (m_targetActive)
    {
-       m_targetTransform.setScale(1.0f, 1.0f, 1.0f);
-       loadMatrixToShader(m_targetTransform.getMatrix());
+       m_goalTransform.setPosition(m_goalPos);
+       loadMatrixToShader(m_goalTransform.getMatrix());
        ngl::VAOPrimitives::instance()->draw("football");
    }
    //TEST FLOCK
-  m_targetTransform.getMatrix();
-  m_testFlock->drawFlock(m_targetActive, m_attributes, m_weightMap, m_targetTransform.getPosition(), m_container);
+  m_goalTransform.getMatrix();
+  m_testFlock->drawFlock(m_targetActive, m_attributes, m_weightMap, m_goalPos, m_container);
 
   emit numBoidsChanged(m_testFlock->getFlockSize());
-
-  update();
 }
 
 
-/*void NGLScene::timerEvent(QTimerEvent *_event )
+void NGLScene::timerEvent(QTimerEvent *_event )
 {
-  if(_event->timerId() == m_sphereUpdateTimer)
+  if(_event->timerId() == m_updateTimer)
   {
-    if (m_animate !=true)
-    {
-      return;
-    }
-  }
-  updateScene();
-  update();
-}*/
-
-void NGLScene::keyPressEvent(QKeyEvent *_event)
-{
-  // this method is called every time the main window recives a key event.
-  // we then switch on the key value and set the camera in the GLWindow
-  switch (_event->key())
-  {
-  // escape key to quite
-  case Qt::Key_Escape : QGuiApplication::exit(EXIT_SUCCESS); break;
-  case Qt::Key_Space :
-      m_win.spinXFace=0;
-      m_win.spinYFace=0;
-      m_modelPos.set(ngl::Vec3::zero());
-  break;
-  //Test Target controls
-  case Qt::Key_Up : m_targetTransform.addPosition(0.0f, 0.0f, -0.01f); break;
-  case Qt::Key_Down : m_targetTransform.addPosition(0.0f, 0.0f, 0.01f); break;
-  case Qt::Key_Right : m_targetTransform.addPosition(0.01f, 0.0f, 0.0f); break;
-  case Qt::Key_Left : m_targetTransform.addPosition(-0.01f, 0.0f, 0.0f); break;
+    return;
   }
   update();
 }
+
 
 //-----------SLOTS-----------
 void NGLScene::setAddBoids(int _numOfBoids)
@@ -280,15 +255,15 @@ void NGLScene::activateTarget(bool _active)
 
 void NGLScene::setGoalPosX(double _posX)
 {
-    m_targetTransform
+    m_goalPos.m_x = static_cast<float>(_posX);
 }
 
 void NGLScene::setGoalPosY(double _posY)
 {
-    m_targetTransform
+    m_goalPos.m_y = static_cast<float>(_posY);
 }
 
 void NGLScene::setGoalPosZ(double _posZ)
 {
-    m_targetTransform
+    m_goalPos.m_z = static_cast<float>(_posZ);
 }

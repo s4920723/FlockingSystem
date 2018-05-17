@@ -117,14 +117,23 @@ public slots:
     /// be drawn and wheather the boids' seeking behaviour is active
     //----------------------------------------------------------------------------------------------------------------------
     void activateTarget(bool _active);
-
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets the X position of goal object that the boids will seek out
+    /// @param _posX the value that will be assigned to the goal's X position
+    //----------------------------------------------------------------------------------------------------------------------
+    void setGoalPosX(double _posX);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets the Y position of goal object that the boids will seek out
+    /// @param _posX the value that will be assigned to the goal's Y position
+    //----------------------------------------------------------------------------------------------------------------------
+    void setGoalPosY(double _posY);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Sets the Z position of goal object that the boids will seek out
+    /// @param _posZ the value that will be assigned to the goal's Z position
+    //----------------------------------------------------------------------------------------------------------------------
+    void setGoalPosZ(double _posZ);
 
 private:
-    //----------------------------------------------------------------------------------------------------------------------
-    /// @brief Qt Event called when a key is pressed
-    /// @param [in] _event the Qt event to query for size etc
-    //----------------------------------------------------------------------------------------------------------------------
-    void keyPressEvent(QKeyEvent *_event) override;
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called every time a mouse is moved
     /// @param _event the Qt Event structure
@@ -142,7 +151,6 @@ private:
     /// @param _event the Qt Event structure
     //----------------------------------------------------------------------------------------------------------------------
     void mouseReleaseEvent ( QMouseEvent *_event ) override;
-
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called everytime the mouse wheel is moved
     /// inherited from QObject and overridden here.
@@ -150,7 +158,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     void wheelEvent( QWheelEvent *_event) override;
 
-    //void timerEvent( QTimerEvent *_event) override;
+    void timerEvent( QTimerEvent *_event) override;
 
     void updateScene();
 
@@ -172,7 +180,7 @@ private:
     std::unique_ptr<Flock> m_testFlock;
 
     ngl::Transformation m_envTransform;
-    ngl::Transformation m_targetTransform;
+    ngl::Transformation m_goalTransform;
 
     std::unique_ptr<ngl::BBox> m_container;
 
@@ -182,6 +190,8 @@ private:
     int m_numOfAddBoids;
     int m_numOfRemoveBoids;
     bool m_targetActive;
+    ngl::Vec3 m_goalPos;
+    int m_updateTimer;
 
   signals :
     void numBoidsChanged(int);

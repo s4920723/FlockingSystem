@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1016</width>
-    <height>697</height>
+    <height>760</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -147,19 +147,6 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QSlider" name="alignmentSlider">
-         <property name="maximum">
-          <number>300</number>
-         </property>
-         <property name="singleStep">
-          <number>10</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
        <item row="8" column="0" colspan="2">
         <widget class="QLabel" name="label">
          <property name="text">
@@ -178,6 +165,12 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimum">
+          <double>-99.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>99.000000000000000</double>
+         </property>
         </widget>
        </item>
        <item row="9" column="1">
@@ -190,6 +183,12 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimum">
+          <double>-99.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>99.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -228,6 +227,12 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimum">
+          <double>-99.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>99.000000000000000</double>
+         </property>
         </widget>
        </item>
        <item row="10" column="0">
@@ -249,6 +254,19 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="5" column="0" colspan="3">
+        <widget class="QSlider" name="alignmentSlider">
+         <property name="maximum">
+          <number>300</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -351,7 +369,7 @@
      <x>0</x>
      <y>0</y>
      <width>1016</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

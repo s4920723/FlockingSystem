@@ -26,10 +26,7 @@ The code uses the Phong shader taken from the SimpleNGL demo for testing purpous
 
 ## Short term to-do
 * Find way to switch between seeking and wandering
-* ~~Scale up the whole scene so you dont have to work with~~
-* ~~Add grid~~
-* Create timer event
-* Figure out a way to have boids not disappear due to miscalculated rotation
+
 * Fix behvaiours. Start with the weight function
 * Think about weighting values
 * Tidy up init stages of NGLScene such as lighting and
