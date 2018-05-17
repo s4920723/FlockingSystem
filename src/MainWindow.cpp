@@ -28,6 +28,16 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), m_ui(new Ui::MainW
   connect(m_ui->maxSpeedSlider, SIGNAL(sliderMoved(int)), m_gl, SLOT(setMaxSpeed(int)));
   connect(m_ui->maxForceSlider, SIGNAL(sliderMoved(int)), m_gl, SLOT(setMaxForce(int)));
   connect(m_ui->awareRadiusSlider, SIGNAL(sliderMoved(int)), m_gl, SLOT(setAwareness(int)));
+
+  //Goal Position
+  connect(m_ui->activeGoal, SIGNAL(toggled(bool)), m_ui->goalPosX, SLOT(setEnabled(bool)));
+  connect(m_ui->activeGoal, SIGNAL(toggled(bool)), m_ui->goalPosY, SLOT(setEnabled(bool)));
+  connect(m_ui->activeGoal, SIGNAL(toggled(bool)), m_ui->goalPosZ, SLOT(setEnabled(bool)));
+  connect(m_ui->goalPosX, SIGNAL(valueChanged(double)), m_gl, SLOT(setGoalPosX(double)));
+  connect(m_ui->goalPosY, SIGNAL(valueChanged(double)), m_gl, SLOT(setGoalPosY(double)));
+  connect(m_ui->goalPosZ, SIGNAL(valueChanged(double)), m_gl, SLOT(setGoalPosZ(double)));
+
+
 }
 
 MainWindow::~MainWindow()

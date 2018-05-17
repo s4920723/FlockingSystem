@@ -277,3 +277,18 @@ void NGLScene::activateTarget(bool _active)
 {
     m_targetActive = _active;
 }
+
+void NGLScene::setGoalPosX(double _posX)
+{
+    m_targetTransform
+}
+
+void NGLScene::setGoalPosY(double _posY)
+{
+    m_targetTransform
+}
+
+void NGLScene::setGoalPosZ(double _posZ)
+{
+    m_targetTransform
+}

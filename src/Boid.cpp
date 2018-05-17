@@ -283,7 +283,7 @@ void Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
     if (neighbourCount > 0)
     {
         positionSum /= (float)neighbourCount;
-
+        std::cout << "Cohesion Position Sum" << positionSum.m_x << ", "<< positionSum.m_y << ", " << positionSum.m_z << "\n";
         positionSum.normalize();
         positionSum *= m_maxSpeed;
         ngl::Vec3 steer = positionSum - m_velocity;
