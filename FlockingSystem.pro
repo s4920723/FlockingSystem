@@ -32,8 +32,7 @@ HEADERS+= $$PWD/include/NGLScene.h \
 FORMS+= $$PWD/ui/MainWindow.ui
 
 # and add the include dir into the search path for Qt and make
-INCLUDEPATH +=./include \
-              C:/NGL/include
+INCLUDEPATH +=./include
 # where our exe is going to live (root of project)
 DESTDIR=./
 # add the glsl shader files
