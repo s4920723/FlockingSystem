@@ -102,6 +102,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimum">
+          <number>10</number>
+         </property>
          <property name="maximum">
           <number>300</number>
          </property>
@@ -136,6 +139,9 @@
        </item>
        <item row="3" column="0" colspan="3">
         <widget class="QSlider" name="separationSlider">
+         <property name="minimum">
+          <number>10</number>
+         </property>
          <property name="maximum">
           <number>300</number>
          </property>
@@ -211,6 +217,15 @@
          <property name="enabled">
           <bool>false</bool>
          </property>
+         <property name="minimum">
+          <number>10</number>
+         </property>
+         <property name="maximum">
+          <number>300</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -257,6 +272,9 @@
        </item>
        <item row="5" column="0" colspan="3">
         <widget class="QSlider" name="alignmentSlider">
+         <property name="minimum">
+          <number>10</number>
+         </property>
          <property name="maximum">
           <number>300</number>
          </property>
@@ -348,7 +366,7 @@
           <number>0</number>
          </property>
          <property name="maximum">
-          <number>5000</number>
+          <number>1000</number>
          </property>
          <property name="singleStep">
           <number>10</number>

@@ -36,15 +36,16 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), m_ui(new Ui::MainW
   connect(m_ui->goalPosX, SIGNAL(valueChanged(double)), m_gl, SLOT(setGoalPosX(double)));
   connect(m_ui->goalPosY, SIGNAL(valueChanged(double)), m_gl, SLOT(setGoalPosY(double)));
   connect(m_ui->goalPosZ, SIGNAL(valueChanged(double)), m_gl, SLOT(setGoalPosZ(double)));
-
-
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 MainWindow::~MainWindow()
 {
     delete m_ui;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
 
 void MainWindow::updateNumBoids(int _b)
 {

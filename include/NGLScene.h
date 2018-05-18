@@ -17,10 +17,10 @@
 #include "WindowParams.h"
 //----------------------------------------------------------------------------------------------------------------------
 /// @file NGLScene.h
-/// @brief this class inherits from the Qt OpenGLWindow and allows us to use NGL to draw OpenGL
-/// @author Jonathan Macey
+/// @brief this class inherits from the Qt QOpenGLWidget and allows us to use NGL to draw OpenGL
+/// @author Jonathan Macey (modified by Kristiyan Aladjov)
 /// @version 1.0
-/// @date 10/9/13
+/// @date 17/05/2018
 /// Revision History :
 /// This is an initial version used for the new NGL6 / Qt 5 demos
 /// @class NGLScene
@@ -157,43 +157,66 @@ private:
     /// @param _event the Qt Event structure
     //----------------------------------------------------------------------------------------------------------------------
     void wheelEvent( QWheelEvent *_event) override;
-
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief this method is timer that periodically updates the scene
+    /// @param _event the Qt Event structure
+    //----------------------------------------------------------------------------------------------------------------------
     void timerEvent( QTimerEvent *_event) override;
-
-    void updateScene();
-
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief this method creates the shader program used to draw the boids
+    //----------------------------------------------------------------------------------------------------------------------
     void initializeShader();
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief sets up the camera for the viewport
+    /// @param _from the position of the camera in world space
+    /// @param _to the direction of where the camera is look at
+    /// @param _up the camera's upward vector
+    //----------------------------------------------------------------------------------------------------------------------
     void initializeCamera(ngl::Vec3 _from, ngl::Vec3 _to, ngl::Vec3 _up);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief this method creates sets up a light uniform
+    //----------------------------------------------------------------------------------------------------------------------
     void createLights();
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief this method creates sets up a MVP and normal matrix uniforms
+    /// @param _modelTransform the model transformation
+    //----------------------------------------------------------------------------------------------------------------------
     void loadMatrixToShader(ngl::Mat4 _modelTransform);
     /// @brief windows parameters for mouse control etc.
     WinParams m_win;
-    ///Mouse transforms
+    /// @brief Mouse transforms
     ngl::Mat4 m_mouseGlobalTX;
-    /// position for our model
+    /// @brief position for our model
     ngl::Vec3 m_modelPos;
-    /// camera
+    /// @brief the scene's camera
     ngl::Camera m_cam;
-    /// Scene Light
+    /// @brief a point light
     ngl::Light m_light01;
-    ///Test Flock
+    /// @brief a flock that will be drawn in the viewport
     std::unique_ptr<Flock> m_testFlock;
-
+    /// @brief the transformations for the ground plane and the bounding box
     ngl::Transformation m_envTransform;
+    /// @brief the transformations for the goal that the boids will seek
     ngl::Transformation m_goalTransform;
-
+    /// @brief the bounding box that will hold the flocking simulation
     std::unique_ptr<ngl::BBox> m_container;
-
+    /// @brief a container for all of the behaviour weight values received from the GUI
     std::map<std::string, float> m_weightMap;
-
+    /// @brief a container for all of the boid attribute values received from the GUI
     std::map<std::string, float> m_attributes;
+    /// @brief hold the value of boids that could potentiallly be added to the flock
     int m_numOfAddBoids;
+    /// @brief hold the value of boids that could potentiallly be removed from the flock
     int m_numOfRemoveBoids;
+    /// @brief signifies whether the seeking goal is active or not
     bool m_targetActive;
+    /// @brief the position of the goal object
     ngl::Vec3 m_goalPos;
+    /// @brief a timer that helps update the scene
     int m_updateTimer;
 
   signals :
+    /// @brief a signal that tells the GUI how many boids currently exist
     void numBoidsChanged(int);
 };
 

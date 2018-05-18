@@ -15,49 +15,61 @@ Boid::Boid(int _id, ngl::Vec3 _initPos, ngl::Vec3 _initVel)
     m_id = _id;
     m_currentTransform.setScale(0.75, 0.75, 0.75);
     m_wanderCounter = 0;
-    m_maxSpeed = 0.15f;
-    m_maxForce = 0.015f;
+    m_maxSpeed = 0.1f;
+    m_maxForce = 0.001f;
     std::cout << "CREATING BOID #" << m_id << "\n";
-    std::cout << "New boid position: " << m_position.m_x << ", "
-              << m_position.m_y << ", " << m_position.m_z << "\n";
-    std::cout << "New boid velocity: " << m_velocity.m_x << ", "
-              << m_velocity.m_y << ", " << m_velocity.m_z << "\n";
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 Boid::~Boid()
 {
     std::cout << "DELETING BOID #" << m_id << "\n";
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 ngl::Vec3 Boid::getPos()
 {
   return m_position;
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 ngl::Vec3 Boid::getVel()
 {
   return m_velocity;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void Boid::setMaxSpeed(float _maxSpeed)
 {
     m_maxSpeed = _maxSpeed;
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void Boid::setMaxForce(float _maxForce)
 {
     m_maxForce = _maxForce;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void Boid::setAwareness(float _awarenessRadius)
 {
     m_awarenessRadius = _awarenessRadius;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 ngl::Transformation Boid::getTransform()
 {
   return m_currentTransform;
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void Boid::loadMatrixToShader(std::string _shaderName, ngl::Camera _cam, ngl::Mat4 _mouseTX)
 {
@@ -78,13 +90,18 @@ void Boid::loadMatrixToShader(std::string _shaderName, ngl::Camera _cam, ngl::Ma
   shader->setUniform("M",M);
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void Boid::drawBoid(std::unique_ptr<ngl::Obj> &_geo)
 {
     _geo->draw();
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void Boid::move(ngl::Vec3 _force, std::unique_ptr<ngl::BBox> &_container)
 {
+  //Translation update
   m_acceleration = _force;
   m_velocity += m_acceleration;
   containment(_container);
@@ -98,59 +115,29 @@ void Boid::move(ngl::Vec3 _force, std::unique_ptr<ngl::BBox> &_container)
   m_currentTransform.setRotation(yaw, pitch, 0);
 }
 
-
-ngl::Vec3 Boid::steer(ngl::Vec3 _target)
-{
-  ngl::Vec3 steer;
-  ngl::Vec3 desired = _target - this->getPos();
-  float d = desired.length();
-  if (d > 0)
-  {
-    desired.normalize();
-    if (d < 0.5f)
-    {
-      desired *= m_maxSpeed*(d/5.0f);
-    }
-    else
-    {
-      desired *= m_maxSpeed;
-    }
-    steer = desired - m_velocity;
-    steer.clamp(m_maxForce);
-  }
-  else
-  {
-    steer.zero();
-  }
-  return steer;
-}
+//----------------------------------------------------------------------------------------------------------------------
 
 ngl::Vec3 Boid::seek(ngl::Vec3 _targetPos)
 {
     ngl::Vec3 desired = _targetPos - m_position;
     desired.normalize();
-    //arrive(_targetPos);
     desired *= m_maxSpeed;
+    if (desired.length() < 5.0f)
+    {
+      desired *= desired.length();
+    }
     ngl::Vec3 steer = desired - m_velocity;
-    steer.clamp(-m_maxForce, m_maxForce);
+    steer.clamp(m_maxForce);
+
 
     return steer;
-
-
 }
 
-void Boid::arrive(ngl::Vec3 _targetPos)
-{
-    ngl::Vec3 desired = _targetPos - m_position;
-    if (desired.length() < 0.1f)
-    {
-      m_maxSpeed = 1/desired.length();
-    }
-}
+//----------------------------------------------------------------------------------------------------------------------
 
 void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
 {
-
+  //Code modified from the NGL collisions demo
   float ext[6];
   ext[0]=(_container->height());
   ext[1]=0.0;
@@ -172,16 +159,21 @@ void Boid::containment(std::unique_ptr<ngl::BBox> &_container)
   }
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 ngl::Vec3 Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
+  //Timer that determines how often the wandering direction changes
     m_wanderCounter++;
     if (m_wanderCounter >= 150)
     {
+      //Seek new random direction
        m_wanderCounter = 0;
        ngl::Vec3 randPos = ngl::Random::instance()->getRandomPoint(300.0, 300.0, 300.0);
        return seek(randPos);
     }
 
+    //Check for neighbours and nullify the result if any exists
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
     {
         ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
@@ -193,11 +185,14 @@ ngl::Vec3 Boid::wander(std::vector<std::unique_ptr<Boid>>& _boidArray)
     }
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 ngl::Vec3 Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     ngl::Vec3 velocitySum;
     int neighbourCount = 0;
     velocitySum.zero();
+    //Check for any neighbours and add their velocity to a sum
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
     {
         ngl::Vec3 distanceVec = otherBoid->getPos() - this->getPos();
@@ -208,6 +203,7 @@ ngl::Vec3 Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray)
             neighbourCount++;
         }
     }
+    //Average out sum and seek the new common velocity
     if (neighbourCount > 0)
     {
         velocitySum /= static_cast<float>(neighbourCount);
@@ -223,12 +219,16 @@ ngl::Vec3 Boid::alignment(std::vector<std::unique_ptr<Boid>>& _boidArray)
     }
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 ngl::Vec3 Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
-    float desiredSeparation = m_awarenessRadius/2;
+    float desiredSeparation = m_awarenessRadius/4;
     ngl::Vec3 differenceSum;
     int neighbourCount = 0;
     differenceSum.zero();
+    //Check for any neighbours and add difference between their
+    //position and the current boid's position to a sum
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
     {
         ngl::Vec3 difference =this->getPos() - otherBoid->getPos();
@@ -241,6 +241,7 @@ ngl::Vec3 Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
             neighbourCount++;
         }
     }
+    //Average the sum, steer away from neighbours
     if (neighbourCount > 0)
     {
         differenceSum /= (float)neighbourCount;
@@ -256,12 +257,14 @@ ngl::Vec3 Boid::separation(std::vector<std::unique_ptr<Boid>>& _boidArray)
     }
 }
 
+//----------------------------------------------------------------------------------------------------------------------
 
 ngl::Vec3 Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
 {
     ngl::Vec3 positionSum;
     positionSum.zero();
     int neighbourCount = 0;
+    //Check for any neighbours and add their position to a sum
     for (std::unique_ptr<Boid>& otherBoid : _boidArray)
     {
         ngl::Vec3 difference = m_position - otherBoid->getPos();
@@ -272,6 +275,7 @@ ngl::Vec3 Boid::cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray)
             neighbourCount++;
         }
     }
+    //Average sum and seek relative centre
     if (neighbourCount > 0)
     {
         positionSum /= static_cast<float>(neighbourCount);

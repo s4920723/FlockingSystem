@@ -13,6 +13,16 @@
 #include <ngl/BBox.h>
 #include <ngl/SimpleVAO.h>
 #include <ngl/Obj.h>
+//----------------------------------------------------------------------------------------------------------------------
+/// @file Boid.h
+/// @brief This class calculates the movement of a single boid and is also capable of drawing it
+/// @author Kristiyan Aladjov
+/// @version 1.0
+/// @date 17/05/2018
+/// @class Boid
+/// @brief our main glwindow widget for NGL applications all drawing elements are
+/// put in this file
+//----------------------------------------------------------------------------------------------------------------------
 
 
 class Boid{
@@ -66,10 +76,9 @@ class Boid{
     /// @param _targetPos is the goal position of the boid
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Vec3 seek(ngl::Vec3 _targetPos);
-    ///ADD THIS BEHAVIOUR INTO SEEK
-    void arrive(ngl::Vec3 _tagetPos);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief draws the boid geometry with the updated location
+    /// @param &_geo reference to the mesh that will be used to draw the boids
     //----------------------------------------------------------------------------------------------------------------------
     void drawBoid(std::unique_ptr<ngl::Obj> &_geo);
     //----------------------------------------------------------------------------------------------------------------------
@@ -87,7 +96,8 @@ class Boid{
     /// @brief the wandering behaviour of the boid which is only
     /// active if it has no neighbouring boids. Similar to seeking
     /// but has a timer which decided how often the method is called
-    /// @param _randomPos the target position of the boid
+    /// @param _boidArray an array containing all the boids in
+    /// the flock
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Vec3 wander(std::vector<std::unique_ptr<Boid>>& _boidArray);
     //----------------------------------------------------------------------------------------------------------------------
@@ -95,8 +105,6 @@ class Boid{
     /// of neighbouring boids
     /// @param _boidArray an array containing all the boids in
     /// the flock
-    /// @param _awareRadius the radius around the boid within which it
-    /// becomes aware of other boids
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Vec3 alignment(std::vector<std::unique_ptr<Boid>>& _boidArray);
     //----------------------------------------------------------------------------------------------------------------------
@@ -104,8 +112,6 @@ class Boid{
     /// avoid neighbouring boids
     /// @param _boidArray an array containing all the boids in
     /// the flock
-    /// @param _awareRadius the radius around the boid within which it
-    /// becomes aware of other boids
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Vec3 separation(std::vector<std::unique_ptr<Boid>>& _boidArray);
     //----------------------------------------------------------------------------------------------------------------------
@@ -113,12 +119,8 @@ class Boid{
     /// get closer to neighbouring boids
     /// @param _boidArray an array containing all the boids in
     /// the flock
-    /// @param _awareRadius the radius around the boid within which it
-    /// becomes aware of other boids
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Vec3 cohesion(std::vector<std::unique_ptr<Boid>>& _boidArray);
-
-    ngl::Vec3 steer(ngl::Vec3 _target);
     /// @brief Boid id number
     int m_id;
 

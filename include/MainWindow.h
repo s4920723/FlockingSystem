@@ -19,9 +19,14 @@ public:
     ~MainWindow();
 
 public slots :
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief removes the last boid that was added to the flock
+    /// @param _numBoids the amout of boids that will be removed
+    //----------------------------------------------------------------------------------------------------------------------
     void updateNumBoids(int _b);
 
 private:
+    /// @brief the ui
     Ui::MainWindow *m_ui;
     /// @brief our openGL widget
     NGLScene *m_gl;

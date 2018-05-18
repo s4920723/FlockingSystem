@@ -19,13 +19,18 @@ Flock::~Flock()
     std::cout << "Flock has been destroyed\n";
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void Flock::addBoid(int _numBoids, std::unique_ptr<ngl::BBox> &_container)
 {
+  //Loop through every boid
     for (int i=0; i < _numBoids; i++)
     {
         ngl::Vec3 randPos;
         ngl::Vec3 randVel;
+        //Assign random intintial position and velocity
         randPos = ngl::Random::instance()->getRandomPoint(_container->width()/2 - 5, _container->height()- 5, _container->depth()/2 - 5);
+        //Place boids that spawn with a negative Y value back in the box
         if (randPos.m_y < 0)
             randPos.m_y *= -1.0f;
         if (randPos.m_y == 0.0f)
@@ -35,6 +40,8 @@ void Flock::addBoid(int _numBoids, std::unique_ptr<ngl::BBox> &_container)
 
     }
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void Flock::removeBoid(int _numBoids)
 {
@@ -47,10 +54,14 @@ void Flock::removeBoid(int _numBoids)
     }
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 int Flock::getFlockSize()
 {
     return static_cast<int>(m_boidArray.size());
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void Flock::setAttributes(std::map<std::string, float> _attributes)
 {
@@ -62,29 +73,26 @@ void Flock::setAttributes(std::map<std::string, float> _attributes)
   }
 }
 
+//----------------------------------------------------------------------------------------------------------------------
 
-void Flock::drawFlock(bool _activeTarget, std::map<std::string, float> _attributes, std::map<std::string, float> _weights,
+void Flock::drawFlock(std::map<std::string, float> _weights, bool _activeTarget,
                       ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container)
 {
     for (std::unique_ptr<Boid>& boid : m_boidArray)
     {
-        //Apply attributes to the boid
-        boid->setMaxSpeed(_attributes.at("maxSpeed"));
-        boid->setMaxForce(_attributes.at("maxForce"));
-        boid->setAwareness(_attributes.at("awarenessRadius"));
-
-        //Calculate boids behaviours
+        //Calculate boids behaviours and weight them once with a the user input and
+        //once with an arbitrary value
         ngl::Vec3 forceSum;
         if (_activeTarget)
         {
-          forceSum += boid->seek(_targetPos) * _weights.at("seekWeight");
+          forceSum += boid->seek(_targetPos) * _weights.at("seekWeight") * 2.5f;
         }
         else
         {
           forceSum += boid->wander(m_boidArray);
         }
         forceSum += boid->alignment(m_boidArray) * _weights.at("alignmentWeight") * 2.0f;
-        forceSum += boid->cohesion(m_boidArray) * _weights.at("cohesionWeight") * 1.0f;
+        forceSum += boid->cohesion(m_boidArray) * _weights.at("cohesionWeight") * 1.5f;
         forceSum += boid->separation(m_boidArray) * _weights.at("separationWeight") * 3.0f;
 
         //Update and draw boid

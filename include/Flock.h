@@ -14,8 +14,16 @@
 #include <ngl/ShaderLib.h>
 #include <ngl/BBox.h>
 #include <ngl/Obj.h>
-
-
+//----------------------------------------------------------------------------------------------------------------------
+/// @file Flock.h
+/// @brief This class manages adding/removing
+/// @author Kristiyan Aladjov
+/// @version 1.0
+/// @date 17/05/2018
+/// @class Flock
+/// @brief our main glwindow widget for NGL applications all drawing elements are
+/// put in this file
+//----------------------------------------------------------------------------------------------------------------------
 class Flock{
   public:
     //----------------------------------------------------------------------------------------------------------------------
@@ -41,7 +49,7 @@ class Flock{
     //----------------------------------------------------------------------------------------------------------------------
     void removeBoid(int _numBoids);
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief Creates uniforms for the MVP and the normals that will
+    /// @brief Creates uniforms for the MVP matrix and the normal matrix that will
     /// be passed to the shader
     /// @param _boidTransform the updated transformations of a boid
     //----------------------------------------------------------------------------------------------------------------------
@@ -50,7 +58,7 @@ class Flock{
     /// @brief draws the flock
     /// @param _boidTransform the updat
     //----------------------------------------------------------------------------------------------------------------------
-    void drawFlock(bool _activeTarget, std::map<std::string, float> _attributes, std::map<std::string, float> _weights, ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container);
+    void drawFlock(std::map<std::string, float> _weights, bool _activeTarget, ngl::Vec3 _targetPos, std::unique_ptr<ngl::BBox> &_container);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Returns the size of the flock array
     //----------------------------------------------------------------------------------------------------------------------
@@ -59,7 +67,7 @@ class Flock{
     /// @brief Returns the size of the flock array
     //----------------------------------------------------------------------------------------------------------------------
     void setAttributes(std::map<std::string, float> _attributes);
-    /// @brief the mouse control transformation used for M uniform
+    /// @brief the mouse control transformation used to calculate the model matrix uniform
     ngl::Mat4 m_mouseTX;
 
   private:
@@ -71,7 +79,7 @@ class Flock{
     std::string m_shaderName;
     /// @brief the bounding box for the flock
     ngl::BBox m_container;
-
+    /// @brief the mesh that will be used to draw the boids
     std::unique_ptr<ngl::Obj> m_boidGeo;
 
 };

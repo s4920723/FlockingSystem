@@ -1,7 +1,6 @@
 #include <QMouseEvent>
 #include <QGuiApplication>
 
-
 #include "NGLScene.h"
 #include <ngl/NGLInit.h>
 #include <iostream>
@@ -43,6 +42,7 @@ void NGLScene::resizeGL(int _w , int _h)
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
 }
 
+//----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::initializeGL()
 {
@@ -50,7 +50,7 @@ void NGLScene::initializeGL()
   // be done once we have a valid GL context but before we call any GL commands. If we dont do
   // this everything will crash
   ngl::NGLInit::instance();
-  glClearColor(0.5f, 0.5f, 0.5f, 1.0f);			   // Grey Background
+  glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
   // enable depth testing for drawfing
   glEnable(GL_DEPTH_TEST);
   // enable multisampling for smoother drawing
@@ -69,8 +69,11 @@ void NGLScene::initializeGL()
 
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::initializeShader()
 {
+  //GLSL shaders taken from QtNGL demo
     constexpr auto shaderProgram = "BoidShader";
     constexpr auto vertShader = "BoidVert";
     constexpr auto fragShader = "BoidFrag";
@@ -96,11 +99,15 @@ void NGLScene::initializeShader()
     boidShader->setUniform("viewerPos", m_cam.getEye().toVec3());
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::initializeCamera(ngl::Vec3 _from, ngl::Vec3 _to, ngl::Vec3 _up)
 {
     m_cam.setShape(45.0f, 720.0f / 576.0f, 0.005f, 350.0f);
     m_cam.set(_from, _to, _up);
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::loadMatrixToShader(ngl::Mat4 _modelTransform)
 {
@@ -122,17 +129,18 @@ void NGLScene::loadMatrixToShader(ngl::Mat4 _modelTransform)
     shader->setUniform("M",M);
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::createLights()
 {
     ngl::ShaderLib *shader=ngl::ShaderLib::instance();
     (*shader)["BoidShader"]->use();
-    //ngl::Mat4 iv = m_cam.getViewMatrix();
-    //iv.transpose();
     ngl::Light light( ngl::Vec3( -2, 5, 2 ), ngl::Colour( 1, 1, 1, 1 ), ngl::Colour( 1, 1, 1, 1 ), ngl::LightModes::POINTLIGHT );
-    //light.setTransform( iv );
-    // load these values to the shader as well
     light.loadToShader( "light" );
 }
+
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::paintGL()
 {
   // clear the screen and depth buffer
@@ -165,20 +173,23 @@ void NGLScene::paintGL()
    loadMatrixToShader(m_envTransform.getMatrix());
    m_container->draw();
 
-   //TARGET
+   //Transform and draw goal object
    if (m_targetActive)
    {
        m_goalTransform.setPosition(m_goalPos);
        loadMatrixToShader(m_goalTransform.getMatrix());
        ngl::VAOPrimitives::instance()->draw("football");
    }
-   //TEST FLOCK
-  m_goalTransform.getMatrix();
-  m_testFlock->drawFlock(m_targetActive, m_attributes, m_weightMap, m_goalPos, m_container);
 
+  //Setup and draw flock
+  m_testFlock->setAttributes(m_attributes);
+  m_testFlock->drawFlock(m_weightMap, m_targetActive, m_goalPos, m_container);
+
+  //Emit a signal to the GUI with the total amount of boids
   emit numBoidsChanged(m_testFlock->getFlockSize());
 }
 
+//----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::timerEvent(QTimerEvent *_event )
 {
@@ -189,17 +200,20 @@ void NGLScene::timerEvent(QTimerEvent *_event )
   update();
 }
 
-
 //-----------SLOTS-----------
 void NGLScene::setAddBoids(int _numOfBoids)
 {
     m_numOfAddBoids = _numOfBoids;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::setRemoveBoids(int _numOfBoids)
 {
     m_numOfRemoveBoids = _numOfBoids;
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::addBoids()
 {
@@ -207,31 +221,43 @@ void NGLScene::addBoids()
     update();
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::removeBoids()
 {
     m_testFlock->removeBoid(m_numOfRemoveBoids);
     update();
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::setSeekWeight(int _weight)
 {
     m_weightMap.at("seekWeight") = static_cast<float>(_weight) * 0.01;
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::setCohesion(int _weight)
 {
     m_weightMap.at("cohesionWeight") = static_cast<float>(_weight) * 0.01;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::setSeparation(int _weight)
 {
     m_weightMap.at("separationWeight") = static_cast<float>(_weight) * 0.01;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::setAlignment(int _weight)
 {
    m_weightMap.at("alignmentWeight") = static_cast<float>(_weight) * 0.01;
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::setMaxSpeed(int _maxSpeed)
 {
@@ -239,11 +265,15 @@ void NGLScene::setMaxSpeed(int _maxSpeed)
     std::cout << "MAX SPEED SET TO: " <<  m_attributes.at("maxSpeed") << "\n";
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::setMaxForce(int _maxForce)
 {
     m_attributes.at("maxForce") =  static_cast<float>(_maxForce) * 0.0001;
     std::cout << "MAX FORCE SET TO: " <<  m_attributes.at("maxForce") << "\n";
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::setAwareness(int _awarenessRadius)
 {
@@ -251,20 +281,28 @@ void NGLScene::setAwareness(int _awarenessRadius)
     std::cout << "MAX FORCE SET TO: " <<  m_attributes.at("awarenessRadius") << "\n";
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::activateTarget(bool _active)
 {
     m_targetActive = _active;
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::setGoalPosX(double _posX)
 {
     m_goalPos.m_x = static_cast<float>(_posX);
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::setGoalPosY(double _posY)
 {
     m_goalPos.m_y = static_cast<float>(_posY);
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::setGoalPosZ(double _posZ)
 {
